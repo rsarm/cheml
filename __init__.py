@@ -1,5 +1,3 @@
 import os
 
-_HOME = os.environ["HOME"]
-
-_DATA_FOLDER = _HOME + '/Documents/ML/DATASETS/'
+_DATA_FOLDER = os.environ["HOME"] + '/Documents/ML/DATASETS/'

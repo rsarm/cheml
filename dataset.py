@@ -16,8 +16,8 @@ class dataset(object):
 
     def __init__(self,nmol=None):
         self.nmol     = nmol
-  
-  
+
+
     def read_xyz(self,datafile):
         self.list_of_mol=get_molecules(datafile,self.nmol)
         self.nmol=len(self.list_of_mol)
@@ -49,9 +49,9 @@ class dataset(object):
         # Getting the angular part.
         _ang=get_bag_adf_dx(elem    , zbag , sigma,
                             n_points, r_max, cut_off  , sublist_of_mol)
-    
+
         x=np.zeros([len(zbag)*2+_ang.shape[1],_ang.shape[0]*_ang.shape[2],n_points])
-    
+
         # Reshaping
         for i in range(len(zbag)):
             x[i]  =_xrr[:,i,:,:].reshape(_xrr.shape[0]*_xrr.shape[2],_xrr.shape[3])
