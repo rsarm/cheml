@@ -43,20 +43,20 @@ def _grep_elem(token,datafile):
     """Returns the number of times 'token' is repeated in datafile."""
     c=0
     for line in datafile:
-      if re.search(token,line): c+=1
+        if re.search(token,line): c+=1
     if c==0:
-      print 'Did not found token',token,'in the dataset.'
-      exit()
+        print 'Did not found token',token,'in the dataset.'
+        exit()
     return c
 
 
 def _find_elem(token):
-    """Once 'self.list_of_mol' is initialized this function
+    """Once 'list_of_mol' is initialized this function
     returns a list with the number of times the element 'token'
     appears in each of the molecules in the dataset.
 
     Notice that it doesn't look in datafile but in
-    self.list_of_mol through the .symb atribute.
+    'list_of_mol' through the .symb atribute.
     """
 
     nelem=np.array([m.symb.count(token) for m in list_of_mol])
@@ -65,12 +65,12 @@ def _find_elem(token):
     return nelem
 
 
-def get_molecules(datafile,nmol):
-    """This function initializes 'self.list_of_mol' which is the
+def get_molecules(datafile,nmol=None):
+    """This function initializes 'list_of_mol' which is the
     list of umols from the .xyz file.
 
     The number of molecule this function is going to parse
-    depends of 'self.nmol' defined by user."""
+    depends of 'nmol' defined by user."""
 
     list_of_mol=[]
 

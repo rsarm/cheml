@@ -1,5 +1,5 @@
 import numpy as np
-import itertools #for the combination of angles
+import itertools #for the combination pairs for the angles.
 
 from descriptors.local.rdf import rdf_at, bag_rdf_at
 from descriptors.local.rdf import rdf_dx, bag_rdf_dx
@@ -39,16 +39,16 @@ class dataset(object):
         sublist_of_mol=np.asarray(self.list_of_mol)[np.arange(0,self.nmol,mol_skip)]
 
         # Getting the atomic part.
-        _xrr=_get_bag_rdf_at(elem    , zbag , direction, sigma,
-                             n_points, r_max, cut_off  , sublist_of_mol)
+        _xrr=get_bag_rdf_at(elem    , zbag , sigma,
+                            n_points, r_max, cut_off  , sublist_of_mol)
 
         # Getting the directional part.
-        _xdx=_get_bag_rdf_dx(elem    , zbag , direction, sigma,
-                             n_points, r_max, cut_off  , sublist_of_mol)
+        _xdx=get_bag_rdf_dx(elem    , zbag , direction, sigma,
+                            n_points, r_max, cut_off  , sublist_of_mol)
 
         # Getting the angular part.
-        _ang=_get_bag_adf_dx(elem    , zbag , direction, sigma,
-                             n_points, r_max, cut_off  , sublist_of_mol)
+        _ang=get_bag_adf_dx(elem    , zbag , sigma,
+                            n_points, r_max, cut_off  , sublist_of_mol)
     
         x=np.zeros([len(zbag)*2+_ang.shape[1],_ang.shape[0]*_ang.shape[2],n_points])
     
@@ -58,12 +58,8 @@ class dataset(object):
             x[i+3]=_xdx[:,i,:,:].reshape(_xdx.shape[0]*_xdx.shape[2],_xdx.shape[3])
         for i in range(_ang.shape[1]):
             x[i+6]=_ang[:,i,:,:].reshape(_ang.shape[0]*_ang.shape[2],_ang.shape[3])
-    
-        y=np.zeros(_xrr.shape[0]*_xrr.shape[2])
 
-        for i,m in enumerate(sublist_of_mol):
-            for e in m.data[:,direction][np.where(m.z==Z[elem])]:
-                y[i]=e
+        y=get_property(elem,sublist_of_mol)
 
         return x,y
 
@@ -80,43 +76,38 @@ class dataset(object):
 ########################################################################################
 #
 #
-def _get_bag_rdf_at(elem, zbag, direction, sigma, n_points, r_max, cut_off, list_of_mol):
-    return np.array([[bag_rdf_at(m,
-                           Z[elem],zi,
-                           n_points  = n_points,
-                           sigma     = sigma,
-                           cut_off   = cut_off,
-                           r_max     = r_max
-                            ).T for zi in zbag]
-                                for m  in list_of_mol
+def get_bag_rdf_at(elem, zbag, sigma,n_points, r_max, cut_off, list_of_mol):
+    """xxx."""
+    return np.array([[bag_rdf_at(m,Z[elem],zi, sigma,n_points,r_max,cut_off).T 
+                      for zi in zbag]
+                      for m  in list_of_mol
                      ])
 #
 #
-def _get_bag_rdf_dx(elem, zbag, direction, sigma, n_points, r_max, cut_off, list_of_mol):
-    return np.array([[bag_rdf_dx(m,
-                           Z[elem],zi,
-                           direction = direction,
-                           n_points  = n_points,
-                           sigma     = sigma,
-                           cut_off   = cut_off,
-                           r_max     = r_max
-                            ).T for zi in zbag]
-                                for m in list_of_mol
+def get_bag_rdf_dx(elem, zbag, direction, sigma, n_points, r_max, cut_off, list_of_mol):
+    """xxx."""
+    return np.array([[bag_rdf_dx(m,Z[elem],zi,direction,sigma,n_points,r_max,cut_off).T
+                      for zi in zbag]
+                      for m  in list_of_mol
                      ])
 #
 #
-def _get_bag_adf_dx(elem, zbag, direction, sigma, n_points, r_max, cut_off, list_of_mol):
-
+def get_bag_adf_dx(elem, zbag, sigma, n_points, r_max, cut_off, list_of_mol):
+    """xxx."""
     number_of_pairs=list(itertools.combinations_with_replacement(zbag,2))
 
-    return np.array([[bag_radf_at(m,
-                           Z[elem],zi,zj,
-                           n_points  = n_points,
-                           sigma     = sigma,
-                           cut_off   = cut_off,
-                           r_max     = r_max
-                            ).T for zi,zj in number_of_pairs]
-                                for m in list_of_mol
+    return np.array([[bag_radf_at(m,Z[elem],zi,zj,sigma,n_points,r_max,cut_off).T
+                      for zi,zj in number_of_pairs]
+                      for m     in list_of_mol
                      ])/float(len(number_of_pairs))
+#
+#
+def get_property(elem,list_of_mol):
+    """xxx."""
+    y=np.array([e     for m in list_of_mol
+                      for e in m.data[np.where(m.z==Z[elem])]
+              ])
+
+    return y
 #
 #

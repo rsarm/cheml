@@ -55,7 +55,7 @@ def rdf_dx(mol,z,direction=0,sigma=1.,n_points=200,r_max=10,cut_off=100.):
 
 
 
-def bag_rdf_at(mol,z1,z2,sigma=1.,n_points=200,r_max=10,cut_off=100.):
+def bag_rdf_at(mol,z1,z2,sigma,n_points,r_max,cut_off):
     """Return the RDFs of the all atoms of atomic number 'z1' in
     the *sub-molecule* of 'mol' consisting of only the atoms of
     atomic number 'z2'.
@@ -83,7 +83,7 @@ def bag_rdf_at(mol,z1,z2,sigma=1.,n_points=200,r_max=10,cut_off=100.):
 
 
 
-def bag_radf_at(mol,z1,z2,z3,sigma=1.,n_points=200,r_max=10,cut_off=100.):
+def bag_radf_at(mol,z1,z2,z3,sigma,n_points,r_max,cut_off):
     """Return the RDFs of the all atoms of atomic number 'z1' in
     the *sub-molecule* of 'mol' consisting of only the atoms of
     atomic number 'z2'.
@@ -127,7 +127,7 @@ def bag_radf_at(mol,z1,z2,z3,sigma=1.,n_points=200,r_max=10,cut_off=100.):
 
 
 
-def bag_rdf_dx(mol,z1,z2,direction=0,sigma=1.,n_points=200,r_max=10,cut_off=100.):
+def bag_rdf_dx(mol,z1,z2,direction,sigma,n_points,r_max,cut_off):
     """Return the directional RDF.
     """
     submol=np.where(mol.z==z2)
