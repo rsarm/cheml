@@ -18,6 +18,7 @@ class dataset(object):
         self.nmol     = nmol
 
 
+
     def read_xyz(self,datafile):
         self.list_of_mol=get_molecules(datafile,self.nmol)
         self.nmol=len(self.list_of_mol)
@@ -25,6 +26,32 @@ class dataset(object):
 
 
     def get_bag_RDF(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
+                                                   r_max=10,cut_off=100.,mol_skip=1):
+        """Returns the bags of RDF. This is an array of size
+        nbags = len(zbag) contains only the the radial bags.
+
+        For instance, if the target is 'O', the radial bags will be
+        O-H, O-C and O-O.
+        """
+
+        sublist_of_mol=np.asarray(self.list_of_mol)[np.arange(0,self.nmol,mol_skip)]
+
+        # Getting the atomic part.
+        _xrr=get_bag_rdf_at(elem    , zbag , sigma,
+                            n_points, r_max, cut_off  , sublist_of_mol)
+
+        x=np.zeros([len(zbag),_xrr.shape[0]*_xrr.shape[2],n_points])
+
+        for i in range(len(zbag)):
+            x[i]  =_xrr[:,i,:,:].reshape(_xrr.shape[0]*_xrr.shape[2],_xrr.shape[3])
+
+        y=get_property(elem,sublist_of_mol)
+
+        return x,y
+
+
+
+    def get_bag_AXRDF(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
                                                    r_max=10,cut_off=100.,mol_skip=1):
         """Returns the bags of RDF. This is an array of size
         nbags = len(zbag)*2 x number_of_pairs(zbags) x n_points array that contains
@@ -41,18 +68,16 @@ class dataset(object):
         # Getting the atomic part.
         _xrr=get_bag_rdf_at(elem    , zbag , sigma,
                             n_points, r_max, cut_off  , sublist_of_mol)
-
         # Getting the directional part.
         _xdx=get_bag_rdf_dx(elem    , zbag , direction, sigma,
                             n_points, r_max, cut_off  , sublist_of_mol)
-
         # Getting the angular part.
         _ang=get_bag_adf_dx(elem    , zbag , sigma,
                             n_points, r_max, cut_off  , sublist_of_mol)
 
+        # Putting all together and reshaping
         x=np.zeros([len(zbag)*2+_ang.shape[1],_ang.shape[0]*_ang.shape[2],n_points])
 
-        # Reshaping
         for i in range(len(zbag)):
             x[i]  =_xrr[:,i,:,:].reshape(_xrr.shape[0]*_xrr.shape[2],_xrr.shape[3])
             x[i+3]=_xdx[:,i,:,:].reshape(_xdx.shape[0]*_xdx.shape[2],_xdx.shape[3])
