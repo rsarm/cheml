@@ -67,7 +67,12 @@ def bag_rdf_at(mol,z1,z2,sigma,n_points,r_max,cut_off):
     """
     submol=np.where(mol.z==z2)
 
-    dm=np.sort(euclidean_distances(mol.R[np.where(mol.z==z1)],mol.R[submol],squared=False),axis=1)
+    if z1==0:
+        atom_selection=np.arange(mol.N)
+    else:
+        atom_selection=np.where(mol.z==z1)
+
+    dm=np.sort(euclidean_distances(mol.R[atom_selection],mol.R[submol],squared=False),axis=1)
 
     # Temporary solution to remove the self element, but it is not
     # really necessary as it doesn't affect the distance.
@@ -81,6 +86,30 @@ def bag_rdf_at(mol,z1,z2,sigma,n_points,r_max,cut_off):
                     for i in range(dm.shape[0])]).T
 
 
+def _bag_rdf_at(mol,z1,z2,sigma,n_points,r_max,cut_off):
+    """Return the RDFs of the all atoms of atomic number 'z1' in
+    the *sub-molecule* of 'mol' consisting of only the atoms of
+    atomic number 'z2'.
+
+    Note: The self element is removed by a
+    'dm[np.where(dm==0.00000)]=1e5'
+    but it could be equaly left in the vector as it doesn't
+    affect the distance.
+    """
+    submol=np.where(mol.z==z2)
+
+    dm=np.sort(euclidean_distances(mol.R[np.where(mol.z==z1)],mol.R[submol],squared=False),axis=1)
+
+    # Temporary solution to remove the self element, but it is not
+    # really necessary as it doesn't affect the distance.
+    dm[np.where(dm<=1e-3)]=1e5
+
+    spc=np.tile(np.linspace(0.,r_max,n_points),(submol[0].shape[0],1))
+
+    smrb=1./smr1(np.linspace(0.,r_max,n_points).T,cut_off,6.,2.)
+
+    return np.array([np.exp(-sigma*np.power(spc.T-dm[i],2)).sum(axis=1)*smrb
+                    for i in range(dm.shape[0])]).T
 
 
 def bag_radf_at(mol,z1,z2,z3,sigma,n_points,r_max,cut_off):

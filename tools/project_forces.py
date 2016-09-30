@@ -68,7 +68,6 @@ for mol in ds.list_of_mol:
 
 
 
-
 exit()
 #Reconstruction of the force
 print ''

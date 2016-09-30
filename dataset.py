@@ -5,6 +5,8 @@ from descriptors.local.rdf import rdf_at, bag_rdf_at
 from descriptors.local.rdf import rdf_dx, bag_rdf_dx
 from descriptors.local.rdf import bag_radf_at
 
+import descriptors.pairwise.pw_rdf as pw_rdf
+
 from atoms import Z
 
 from io.xyz import get_molecules
@@ -22,6 +24,14 @@ class dataset(object):
     def read_xyz(self,datafile):
         self.list_of_mol=get_molecules(datafile,self.nmol)
         self.nmol=len(self.list_of_mol)
+
+
+
+    def get_pairwise_RDF(self,elem,zbag=[1.0,6.0,8.0],sigma=1.,n_points=200,
+                                                      r_max=10,cut_off=100.,mol_skip=1):
+        """xxx."""
+        return pw_rdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
+                                                      r_max,cut_off,mol_skip)
 
 
 
@@ -72,7 +82,7 @@ class dataset(object):
         _xdx=get_bag_rdf_dx(elem    , zbag , direction, sigma,
                             n_points, r_max, cut_off  , sublist_of_mol)
         # Getting the angular part.
-        _ang=get_bag_adf_dx(elem    , zbag , sigma,
+        _ang=get_bag_adf_at(elem    , zbag , sigma,
                             n_points, r_max, cut_off  , sublist_of_mol)
 
         # Putting all together and reshaping
@@ -117,7 +127,7 @@ def get_bag_rdf_dx(elem, zbag, direction, sigma, n_points, r_max, cut_off, list_
                      ])
 #
 #
-def get_bag_adf_dx(elem, zbag, sigma, n_points, r_max, cut_off, list_of_mol):
+def get_bag_adf_at(elem, zbag, sigma, n_points, r_max, cut_off, list_of_mol):
     """xxx."""
     number_of_pairs=list(itertools.combinations_with_replacement(zbag,2))
 
