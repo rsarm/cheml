@@ -5,6 +5,20 @@ import numpy as np
 Z={'H':1.,'C':6.,'N':7.,'O':8.,'F':9., 'Cu':29.}
 
 
+def rotation_matrix(theta, u):
+    u = u / np.linalg.norm(u)
+    return np.array(
+      [[np.cos(theta) + u[0]**2 * (1-np.cos(theta)),
+        u[0] * u[1] * (1-np.cos(theta)) - u[2] * np.sin(theta),
+        u[0] * u[2] * (1-np.cos(theta)) + u[1] * np.sin(theta)],
+       [u[0] * u[1] * (1-np.cos(theta)) + u[2] * np.sin(theta),
+        np.cos(theta) + u[1]**2 * (1-np.cos(theta)),
+        u[1] * u[2] * (1-np.cos(theta)) - u[0] * np.sin(theta)],
+       [u[0] * u[2] * (1-np.cos(theta)) - u[1] * np.sin(theta),
+        u[1] * u[2] * (1-np.cos(theta)) + u[0] * np.sin(theta),
+        np.cos(theta) + u[2]**2 * (1-np.cos(theta))]]
+                   )
+
 
 class molecule(object):
     """Objects of class molecule have  the common molecular
@@ -41,5 +55,9 @@ class molecule(object):
 
     def distance(self,atom_i,atom_j):
          return np.linalg.norm(self.R[atom_i]-self.R[atom_j])
+
+
+    def rotate(self, angle, u):
+        return np.dot(rotation_matrix(angle, u),self.R.T).T
 
 

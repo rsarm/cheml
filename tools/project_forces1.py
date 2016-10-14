@@ -47,30 +47,18 @@ def Rmatrix(mol,i):
     """
 
     #r=np.linalg.norm(mol.R[i]-mol.R[j])
-    coordlist=np.zeros(mol.N-1)
-    c=0
-    for ia in range(mol.natm):
-        if ia!=i:
-            coordlist[c]=ia
-            c+=1
-
     return  np.array([ Rij(i,j) * \
-        decay(np.linalg.norm(mol.R[i]-mol.R[j]),5.,function='sin')
-                       for j in coordlist
+        decay(np.linalg.norm(mol.R[i]-mol.R[j]),3.,function='sin')
+                       for j in range(mol.N)
                     ])
 #
 #
 def prj_print(mol,component):
     print mol.N,'\n','Mol', mol.energy, '0.0'
-    for i in range(mol.N):
+    for i in range(mol.natm):
         print mol.symb[i],
         print rxyz.write_formated( mol.R[i] ),'   ',
-        for f in range(mol.N-1):
-            if f==i:
-                print '  0.00000000',
-            print rxyz.write_formated( [component[i,f]] ),
-        if i != mol.N-1: print ''
-    print '  0.00000000'
+        print rxyz.write_formated( component[:,i] )
 #
 #
 
@@ -87,33 +75,18 @@ for mol in ds.list_of_mol:
       Ft[i]=mol.data[i]
 
   R =np.array([Rmatrix(mol,i) for i in range(mol.N)])
-
-
-  fc=np.empty((mol.natm,mol.natm-1))
+  fc=np.empty((mol.natm,mol.natm))
 
   for i in range(mol.N):
-      RRT=np.dot(R[i],R[i].T)
-      RFt=np.dot(R[i],Ft[i,:])
-
-      RRT_inv=np.linalg.inv(RRT)
-
-      fc[i,:]=np.dot(RRT_inv,RFt)
+      fc[i,:]=np.einsum('ik,k->i',R[i],Ft[i,:])
 
   prj_print(mol,fc)
 
 #print np.linalg.norm(R[0],axis=1)
 
 
-print R.shape
-print fc.shape
 
-
-print ''
-mol=ds.list_of_mol[0]
-for i in range(mol.N):
-    print np.einsum('ki,k->i',R[i],fc[i,:])-mol.data[i]
-
-exit()
+#exit()
 #Reconstruction of the force
 print ''
 mol=ds.list_of_mol[0]

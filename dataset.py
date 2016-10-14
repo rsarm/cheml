@@ -1,11 +1,13 @@
 import numpy as np
 import itertools #for the combination pairs for the angles.
 
-from descriptors.local.rdf import rdf_at, bag_rdf_at
-from descriptors.local.rdf import rdf_dx, bag_rdf_dx
-from descriptors.local.rdf import bag_radf_at
+from descriptors.atomic.rdf import rdf_at, bag_rdf_at
+from descriptors.atomic.rdf import rdf_dx, bag_rdf_dx
+from descriptors.atomic.rdf import bag_radf_at
 
-import descriptors.pairwise.pw_rdf as pw_rdf
+import descriptors.pairwise.pw_rdf as pwrdf
+
+import descriptors.molecular.bob as mbob
 
 from atoms import Z
 
@@ -13,8 +15,7 @@ from io.xyz import get_molecules
 #from io.cvs import get_molecules
 
 class dataset(object):
-    """xxx.
-    """
+    """xxx."""
 
     def __init__(self,nmol=None):
         self.nmol     = nmol
@@ -27,11 +28,25 @@ class dataset(object):
 
 
 
-    def get_pairwise_RDF(self,elem,zbag=[1.0,6.0,8.0],sigma=1.,n_points=200,
-                                                      r_max=10,cut_off=100.,mol_skip=1):
+    def get_pairwise_rdf(self,elem,zbag=[1.0,6.0,8.0],sigma=1.,n_points=200,
+                              r_max=10,cut_off=100.,mol_skip=1):
         """xxx."""
         return pw_rdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
                                                       r_max,cut_off,mol_skip)
+
+
+    def get_molecular_bob(self,descriptor='CM'):
+        """xxx."""
+
+        return mbob.get_molecular_bob(self)
+
+
+
+
+
+
+
+
 
 
 
