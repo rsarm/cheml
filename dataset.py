@@ -5,9 +5,9 @@ from descriptors.atomic.rdf import rdf_at, bag_rdf_at
 from descriptors.atomic.rdf import rdf_dx, bag_rdf_dx
 from descriptors.atomic.rdf import bag_radf_at
 
-import descriptors.pairwise.pw_rdf as pwrdf
-
-import descriptors.molecular.bob as mbob
+import descriptors.pairwise.pwrdf  as pwrdf
+import descriptors.molecular.bob   as mbob
+import descriptors.atomic.bob      as abob
 
 from atoms import Z
 
@@ -29,12 +29,28 @@ class dataset(object):
 
 
 
+
+    def _find_elem(self,token):
+        """Once 'list_of_mol' is initialized this function
+        returns a list with the number of times the element 'token'
+        appears in each of the molecules in the dataset.
+        """
+
+        nelem=np.array([m.symb.count(token) for m in self.list_of_mol])
+
+        if nelem.sum()==0: exit('Did not found token '+ token +' in the dataset')
+        return nelem
+
+
+
+
     def to_ase(self,nmol=None):
         """Returns a list of nmol ase.atoms.Atoms objects
         that is not bound to the class dataset."""
         from io.ml_to_ase import to_ase
 
         return to_ase(self,nmol=nmol)
+
 
 
 
@@ -47,6 +63,7 @@ class dataset(object):
 
 
 
+
     def get_pairwise_rdf(self,elem,zbag=[1.0,6.0,8.0],sigma=1.,n_points=200,
                               r_max=10,cut_off=100.,mol_skip=1):
         """xxx."""
@@ -55,10 +72,24 @@ class dataset(object):
 
 
 
-    def get_molecular_bob(self,descriptor='CM'):
+
+    def get_molecular_bob(self):
         """xxx."""
 
         return mbob.get_molecular_bob(self)
+
+
+
+
+    def get_atomic_bob(self,elem,col=0):
+        """xxx."""
+
+        return abob.get_atomic_bob(self,elem,self._find_elem(element).sum(),col)
+
+
+
+
+
 
 
 

@@ -2,7 +2,7 @@ import numpy as np
 
 from sklearn.metrics        import euclidean_distances
 
-from ..smearing import smr1
+from ..base import smr1
 
 
 def rdf_at(mol,z,sigma=1.,n_points=200,r_max=10,cut_off=100.):

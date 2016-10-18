@@ -50,19 +50,19 @@ def _grep_elem(token,datafile):
     return c
 
 
-def _find_elem(token):
-    """Once 'list_of_mol' is initialized this function
-    returns a list with the number of times the element 'token'
-    appears in each of the molecules in the dataset.
-
-    Notice that it doesn't look in datafile but in
-    'list_of_mol' through the .symb atribute.
-    """
-
-    nelem=np.array([m.symb.count(token) for m in list_of_mol])
-
-    if nelem.sum()==0: exit('Did not found token '+ token +' in the dataset')
-    return nelem
+#def _find_elem(token):
+#    """Once 'list_of_mol' is initialized this function
+#    returns a list with the number of times the element 'token'
+#    appears in each of the molecules in the dataset.
+#
+#    Notice that it doesn't look in datafile but in
+#    'list_of_mol' through the .symb atribute.
+#    """
+#
+#    nelem=np.array([m.symb.count(token) for m in list_of_mol])
+#
+#    if nelem.sum()==0: exit('Did not found token '+ token +' in the dataset')
+#    return nelem
 
 
 def get_molecules(datafile,nmol=None):
