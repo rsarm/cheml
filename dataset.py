@@ -11,8 +11,6 @@ import descriptors.molecular.bob as mbob
 
 from atoms import Z
 
-from io.xyz import get_molecules
-#from io.cvs import get_molecules
 
 class dataset(object):
     """xxx."""
@@ -23,8 +21,29 @@ class dataset(object):
 
 
     def read_xyz(self,datafile):
+        """Returns a list of molecule objects."""
+        from io.xyz       import get_molecules
+
         self.list_of_mol=get_molecules(datafile,self.nmol)
         self.nmol=len(self.list_of_mol)
+
+
+
+    def to_ase(self,nmol=None):
+        """Returns a list of nmol ase.atoms.Atoms objects
+        that is not bound to the class dataset."""
+        from io.ml_to_ase import to_ase
+
+        return to_ase(self,nmol=nmol)
+
+
+
+    def to_pyscf(self,nmol=None):
+        """Returns a list of nmol ase.gto.Mole objects
+        that is not bound to the class dataset."""
+        from io.ml_to_pyscf import to_pyscf
+
+        return to_pyscf(self,nmol)
 
 
 
@@ -33,6 +52,7 @@ class dataset(object):
         """xxx."""
         return pw_rdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
                                                       r_max,cut_off,mol_skip)
+
 
 
     def get_molecular_bob(self,descriptor='CM'):

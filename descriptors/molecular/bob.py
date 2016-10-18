@@ -14,12 +14,12 @@ def _descriptor_molecular(mol):
     """
     z_list = np.sort(np.array(list(OrderedDict.fromkeys(mol.z))))
 
-    zii=np.array([ np.sort(np.array([z1*z1/mol.distance(iz1,iz2)
+    zii=np.array([ np.sort(np.array([z1*z1/mol.distance(iz1,iz2)#**12-z1*z1/mol.distance(iz1,iz2)**6
                                      for k,iz1 in enumerate(np.where(mol.z==z1)[0])
                                      for   iz2 in           np.where(mol.z==z1)[0][:k]]))
                                      for z1 in z_list])
 
-    zij=np.array([ np.sort(np.array([z1*z2/mol.distance(iz1,iz2)
+    zij=np.array([ np.sort(np.array([z1*z2/mol.distance(iz1,iz2)#**12-z1*z2/mol.distance(iz1,iz2)**6
                                      for iz1 in np.where(mol.z==z1)[0]
                                      for iz2 in np.where(mol.z==z2)[0]]) )
                                      for z1,z2 in list(combinations(z_list,2))])
