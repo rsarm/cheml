@@ -19,8 +19,8 @@ def smr1(x,x0,n,sigma):
 
 
 def euclidean(x,y):
-    """Euclidian distance matrix using:
-    dist(x,y)=sqrt(dot(x, x)+dot(y, y)-2*dot(x, y))
+    """Euclidean distance matrix using:
+    (x-y)^2 = x.x + y.y - 2*y.y
     """
 
     xx=np.einsum('ij,ij->i', x,x)[:, np.newaxis]
