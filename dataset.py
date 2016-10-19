@@ -7,7 +7,9 @@ from descriptors.atomic.rdf import bag_radf_at
 
 import descriptors.pairwise.pwrdf  as pwrdf
 import descriptors.molecular.bob   as mbob
+import descriptors.molecular.cm    as mcm
 import descriptors.atomic.bob      as abob
+
 
 from atoms import Z
 
@@ -84,10 +86,15 @@ class dataset(object):
     def get_atomic_bob(self,elem,col=0):
         """xxx."""
 
-        return abob.get_atomic_bob(self,elem,self._find_elem(element).sum(),col)
+        return abob.get_atomic_bob(self,elem,self._find_elem(elem).sum(),col)
 
 
 
+
+    def get_molecular_cm(self):
+        """xxx."""
+        
+        return mcm.get_molecular_cm(self)
 
 
 

@@ -10,10 +10,15 @@ from ..base import Z, smr1
 
 def _descriptor_atomic(mol,ei):
   """
-  Returns the BOB vector for each of the
+  Returns the atomic quickBOB vector for each of the
   atoms specified by 'ei'.
+
+  'quickBOB' means that the this function considers only
+  the distances target-other_atoms, and no the distances
+  other_atoms-other_atoms.
   """
-  cm=np.zeros([len(ei),mol.natm,mol.natm])
+
+  cm=np.zeros([len(ei),mol.natm])
 
   for cc,i in enumerate(ei):
       dl=np.linalg.norm(mol.R-mol.R[i],axis=1)
@@ -25,7 +30,8 @@ def _descriptor_atomic(mol,ei):
 
       dl[i]=1.
       invdl=mol.z[i]/np.power(dl,1.)[sorted_order]
-      cm[cc][0]=invdl*zz
+
+      cm[cc]=invdl*zz
 
   return cm
 
@@ -42,7 +48,8 @@ def _descriptor_atomic(mol,ei):
 class M_Atomic(object):
   def f(self,mol,ei):
     cm=_descriptor_atomic(mol,ei)
-    return np.array([cm[i][np.triu_indices(mol.N)] for i in range(cm.shape[0])])
+    #return np.array([cm[i][np.triu_indices(mol.N)] for i in range(cm.shape[0])])
+    return cm
 
 
 
@@ -53,23 +60,17 @@ def get_atomic_bob(ds,element,nelem,col):
 
     lm=int(np.array([i.N for i in ds.list_of_mol]).max())
 
-    descv=M_Atomic()
-
-    hsize=(lm*lm+lm)/2
-
     y=np.zeros( nelem)
-    X=np.zeros([nelem,hsize])
+    X=np.zeros([nelem,lm])
 
-    i=0
+    j=0; i=0
     for m in ds.list_of_mol:
-      for e in m.data[:,col][np.where(m.z==Z[element])]:
-        y[i]=e
-        i+=1
+        for e in m.data[:,col][np.where(m.z==Z[element])]:
+            y[j]=e
+            j+=1
 
-    i=0
-    for m in ds.list_of_mol:
-      _cm=descv.f(m,np.where(m.z==Z[element])[0])
-      X[i:i+_cm.shape[0],:_cm.shape[1]]=_cm
-      i+=_cm.shape[0]
+        cm=_descriptor_atomic(m,np.where(m.z==Z[element])[0])
+        X[i:i+cm.shape[0],:cm.shape[1]]=cm
+        i+=cm.shape[0]
 
     return  X,y
