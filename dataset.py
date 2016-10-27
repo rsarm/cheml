@@ -11,9 +11,9 @@ import descriptors.molecular.cm    as mcm
 import descriptors.atomic.bob      as abob
 import descriptors.atomic.cm       as acm
 
+from atoms import molecule,Z,str_z2s
 
-from atoms import Z
-
+from collections import OrderedDict
 
 class dataset(object):
     """xxx."""
@@ -47,6 +47,66 @@ class dataset(object):
 
 
 
+    def get_largest_stoich(self):
+        """Stoichiometry of the largest molecule that
+           comprisses all stoichiometries in the dataset.
+        """
+
+        z_list=np.concatenate([m.z for m in self.list_of_mol[:]]).flatten()
+
+        elems=np.sort(np.array(list(OrderedDict.fromkeys(z_list))))
+
+        stoic=[ np.array([np.where(m.z==z)[0].shape[0]
+                          for m in self.list_of_mol[:]]).max() for z in elems]
+
+        return zip(elems,stoic)
+
+
+
+
+    def equalize_mol_sizes(self):
+        """Changes self.list_of_mol to a list of molecules
+        which equal size. 
+
+        The order of the elements in the new extendend molecules
+        is allways the same.
+
+        The dummy atoms in the smaller
+        molecules have coordinates [1e3, 1e3, 1e3], meaning that
+        they are very far from the actual molecule.
+
+        The inverse of the distances between dummy atoms are allways
+        used in numpy arrays do they give np.inf, which are then
+        change by zeros dist[dist==np.inf]=0.00000.
+        """
+
+        largest_stoi=self.get_largest_stoich()
+
+        em=np.concatenate([np.array([z,1e3,1e3,1e3]*n).reshape([n,4])
+                           for z,n in largest_stoi])
+
+        symb=[str_z2s[s] for s in em[:,0].astype(str)]
+
+        eqsize_list=[]
+
+        for m in self.list_of_mol:
+            _em=np.copy(em)
+            for z,n in largest_stoi:
+                _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
+                                                            m.R[np.where(m.z==z)]
+
+            mol=molecule(_em.astype(str))
+            mol.get_molecule()
+            mol.energy = m.energy
+            mol.symb   = symb  #Otherwise the symbols are strings like '1.0', '6.0'.
+            eqsize_list.append(mol)
+
+        self.list_of_mol=eqsize_list
+        self.nmol=len(self.list_of_mol)
+
+
+
+
     def to_ase(self,nmol=None):
         """Returns a list of nmol ase.atoms.Atoms objects
         that is not bound to the class dataset."""
@@ -76,10 +136,18 @@ class dataset(object):
 
 
 
-    def get_molecular_bob(self):
+    def get_molecular_bob_slow(self):
         """xxx."""
 
         return mbob.get_molecular_bob(self)
+
+
+
+
+    def get_molecular_bob(self):
+        """xxx."""
+
+        return mcm.get_molecular_bob(self)
 
 
 
@@ -196,7 +264,7 @@ class dataset(object):
 #
 def get_bag_rdf_at(elem, zbag, sigma,n_points, r_max, cut_off, list_of_mol):
     """xxx."""
-    return np.array([[bag_rdf_at(m,Z[elem],zi, sigma,n_points,r_max,cut_off).T 
+    return np.array([[bag_rdf_at(m,Z[elem],zi, sigma,n_points,r_max,cut_off).T
                       for zi in zbag]
                       for m  in list_of_mol
                      ])
