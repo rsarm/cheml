@@ -23,6 +23,7 @@ class dataset(object):
 
 
 
+
     def read_xyz(self,datafile):
         """Returns a list of molecule objects."""
         from io.xyz       import get_molecules
@@ -90,15 +91,21 @@ class dataset(object):
         eqsize_list=[]
 
         for m in self.list_of_mol:
-            _em=np.copy(em)
+            _em=np.copy(em)       # empty molecule
+            _ed=np.copy(em[:,1:]) # empty data
             for z,n in largest_stoi:
                 _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
                                                             m.R[np.where(m.z==z)]
+
+            for z,n in largest_stoi:
+                _ed[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],:]=\
+                                                            m.data[np.where(m.z==z)]
 
             mol=molecule(_em.astype(str))
             mol.get_molecule()
             mol.energy = m.energy
             mol.symb   = symb  #Otherwise the symbols are strings like '1.0', '6.0'.
+            mol.data   = _ed
             eqsize_list.append(mol)
 
         self.list_of_mol=eqsize_list
@@ -130,7 +137,7 @@ class dataset(object):
     def get_pairwise_rdf(self,elem,zbag=[1.0,6.0,8.0],sigma=1.,n_points=200,
                               r_max=10,cut_off=100.,mol_skip=1):
         """xxx."""
-        return pw_rdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
+        return pwrdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
                                                       r_max,cut_off,mol_skip)
 
 
