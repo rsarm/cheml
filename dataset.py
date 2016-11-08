@@ -40,6 +40,10 @@ class dataset(object):
         appears in each of the molecules in the dataset.
         """
 
+        # Using 'X' as name to include all elements
+        if token=='X':
+            return np.array([m.N for m in self.list_of_mol])
+
         nelem=np.array([m.symb.count(token) for m in self.list_of_mol])
 
         if nelem.sum()==0: exit('Did not found token '+ token +' in the dataset')
@@ -82,6 +86,7 @@ class dataset(object):
         """
 
         largest_stoi=self.get_largest_stoich()
+        ls=sum([i[1] for i in largest_stoi])
 
         em=np.concatenate([np.array([z,1e3,1e3,1e3]*n).reshape([n,4])
                            for z,n in largest_stoi])
@@ -92,14 +97,14 @@ class dataset(object):
 
         for m in self.list_of_mol:
             _em=np.copy(em)       # empty molecule
-            _ed=np.copy(em[:,1:]) # empty data
+            _ed=np.zeros([ls,ls]) # empty data
             for z,n in largest_stoi:
                 _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
                                                             m.R[np.where(m.z==z)]
 
             for z,n in largest_stoi:
                 _ed[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],:]=\
-                                                            m.data[np.where(m.z==z)]
+                                                            m.data[np.where(m.z==z)][:,:ls]
 
             mol=molecule(_em.astype(str))
             mol.get_molecule()

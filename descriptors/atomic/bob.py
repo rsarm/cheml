@@ -53,7 +53,7 @@ class M_Atomic(object):
 
 
 
-################################### Functions to by applie to dataset (get_) #############
+################################### Functions to by applied to dataset (get_) ############
 
 def get_atomic_bob(ds,element,nelem,col):
     """xxx."""
@@ -65,6 +65,7 @@ def get_atomic_bob(ds,element,nelem,col):
 
     j=0; i=0
     for m in ds.list_of_mol:
+        Z['X']=m.z
         for e in m.data[:,col][np.where(m.z==Z[element])]:
             y[j]=e
             j+=1

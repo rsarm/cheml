@@ -3,7 +3,7 @@ import numpy as np
 
 
 
-Z={'H':1.,'C':6.,'N':7.,'O':8.,'F':9., 'Cu':29.}
+Z={'X':0.,'H':1.,'C':6.,'N':7.,'O':8.,'F':9.,'Cu':29.}
 
 
 
@@ -20,7 +20,7 @@ def smr1(x,x0,n,sigma):
 
 def euclidean(x,y):
     """Euclidean distance matrix using:
-    (x-y)^2 = x.x + y.y - 2*y.y
+    (x-y)^2 = x.x + y.y - 2*x.y
     """
 
     xx=np.einsum('ij,ij->i', x,x)[:, np.newaxis]
