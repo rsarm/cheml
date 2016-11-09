@@ -45,13 +45,16 @@ def bob(mol,z_list):
     http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
     """
 
-    with np.errstate(divide='ignore', invalid='raise'):
+    #with np.errstate(divide='ignore', invalid='raise'):
         # invalid refers to 0./0.
         # divide  refers to  x/0. (x!=0.)
-        cmat=_descriptor_molecular(mol)
-        cmat[cmat == np.inf] = 0.
-        #cmat = np.nan_to_num(cmat) # Here there is no nan.
+        #cmat=_descriptor_molecular(mol)
+        #cmat[cmat == np.inf] = 0.
+        ###cmat = np.nan_to_num(cmat) # Leave this line commented! there can't be nan here.
 
+    np.errstate(divide='ignore', invalid='raise')
+    cmat=_descriptor_molecular(mol)
+    cmat[cmat == np.inf] = 0.
 
     #z_list = np.sort(np.array(list(OrderedDict.fromkeys(mol.z))))
 

@@ -82,7 +82,15 @@ class dataset(object):
 
         The inverse of the distances between dummy atoms are allways
         used in numpy arrays do they give np.inf, which are then
-        change by zeros dist[dist==np.inf]=0.00000.
+        changed by zeros dist[dist==np.inf]=0.00000. Because of
+        this is better to use a with statement to get descriptors
+        from the dataset class. For example:
+
+        with np.errstate(divide='ignore', invalid='raise'):
+            x,y=ds.get_molecular_cm()
+            x[x == np.inf] = 0.
+
+        If there is a nan here, it means that something is wrong.
         """
 
         largest_stoi=self.get_largest_stoich()
@@ -96,11 +104,11 @@ class dataset(object):
         eqsize_list=[]
 
         for m in self.list_of_mol:
-            _em=np.copy(em)       # empty molecule
+            _em=np.copy(em)                        # empty molecule
             if data_kind=='fixed':
                 _ed=np.zeros([ls,m.data.shape[1]]) # empty data
             if data_kind=='projections':
-                _ed=np.zeros([ls,ls]) # empty data
+                _ed=np.zeros([ls,ls])              # empty data
 
             for z,n in largest_stoi:
                 _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
