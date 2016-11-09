@@ -40,7 +40,7 @@ class dataset(object):
         appears in each of the molecules in the dataset.
         """
 
-        # Using 'X' as name to include all elements
+        # Using 'X' as name to select all elements
         if token=='X':
             return np.array([m.N for m in self.list_of_mol])
 
@@ -69,9 +69,9 @@ class dataset(object):
 
 
 
-    def equalize_mol_sizes(self):
+    def equalize_mol_sizes(self,data_kind='fixed'):
         """Changes self.list_of_mol to a list of molecules
-        which equal size. 
+        which equal size.
 
         The order of the elements in the new extendend molecules
         is allways the same.
@@ -97,7 +97,11 @@ class dataset(object):
 
         for m in self.list_of_mol:
             _em=np.copy(em)       # empty molecule
-            _ed=np.zeros([ls,ls]) # empty data
+            if data_kind=='fixed':
+                _ed=np.zeros([ls,m.data.shape[1]]) # empty data
+            if data_kind=='projections':
+                _ed=np.zeros([ls,ls]) # empty data
+
             for z,n in largest_stoi:
                 _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
                                                             m.R[np.where(m.z==z)]
