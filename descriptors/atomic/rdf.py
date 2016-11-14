@@ -8,7 +8,7 @@ from ..base import euclidean,smr1,Z
 
 
 
-def bag_rdf_at(mol,z1,z2,sigma,n_points,r_max,cut_off):
+def bag_rdf_at(mol,z1,z2,n_points,sigma,r_max,cut_off):
     """Return the RDFs of the all atoms of atomic number 'z1' in
     the *sub-molecule* of 'mol' consisting of only the atoms of
     atomic number 'z2'.
@@ -42,7 +42,7 @@ def bag_rdf_at(mol,z1,z2,sigma,n_points,r_max,cut_off):
 
 
 
-def bag_rdf_dx(mol,z1,z2,direction,sigma,n_points,r_max,cut_off):
+def bag_rdf_dx(mol,z1,z2,n_points,sigma,r_max,cut_off,direction):
     """Return the directional RDF.
     """
     submol=np.where(mol.z==z2)
@@ -73,7 +73,7 @@ def bag_rdf_dx(mol,z1,z2,direction,sigma,n_points,r_max,cut_off):
 
 
 
-def bag_radf_at(mol,z1,z2,z3,sigma,n_points,r_max,cut_off):
+def bag_radf_at(mol,z1,z2,z3,n_points,sigma,r_max,cut_off):
     """Return the RDFs of all atoms of atomic number 'z1' in
     the *sub-molecule* of 'mol' consisting of only the atoms of
     atomic number 'z2'.
@@ -117,28 +117,36 @@ def bag_radf_at(mol,z1,z2,z3,sigma,n_points,r_max,cut_off):
 
 
 
-def get_bag_rdf_at(sublist,elem,zbag,n_points,sigma,cut_off,r_max):
+def get_bag_rdf_at(list_of_mol,elem,zbag,n_points,sigma,r_max,cut_off):
     """xxx."""
 
-    return np.array([[bag_rdf_at(m,Z[elem],zi,n_points,sigma,cut_off,r_max).T
-                            for zi in zbag] for m  in sublist])
+    return np.array([[bag_rdf_at(m,Z[elem],zi,n_points,sigma,r_max,cut_off).T
+                            for zi in zbag] for m  in list_of_mol])
 
 
-def get_bag_rdf_dx(sublist,elem,zbag,n_points,sigma,cut_off,r_max,direction):
+
+
+
+def get_bag_rdf_dx(list_of_mol,elem,zbag,n_points,sigma,r_max,cut_off,direction):
     """xxx."""
 
-    return np.array([[bag_rdf_dx(m,Z[elem],zi,direction,n_points,sigma,cut_off,r_max).T
-                            for zi in zbag] for m  in sublist])
+    return np.array([[bag_rdf_dx(m,Z[elem],zi,n_points,sigma,r_max,cut_off,direction).T
+                            for zi in zbag] for m  in list_of_mol])
 
 
-def get_bag_radf(sublist,elem,zbag,n_points,sigma,cut_off,r_max):
+
+
+
+def get_bag_rdf_an(list_of_mol,elem,zbag,n_points,sigma,r_max,cut_off):
     """xxx."""
 
     number_of_pairs=list(combinations_with_replacement(zbag,2))
 
-    return np.array([[bag_radf_at(m,Z[elem],zi,zj,n_points,sigma,cut_off,r_max).T
-                            for zi,zj in number_of_pairs] for m in sublist
+    return np.array([[bag_radf_at(m,Z[elem],zi,zj,n_points,sigma,r_max,cut_off).T
+                            for zi,zj in number_of_pairs] for m in list_of_mol
                  ])/float(len(number_of_pairs)*2)
+
+
 
 
 
@@ -155,26 +163,13 @@ def get_bag_rdf(ds,elem,zbag,direction,sigma,n_points,r_max,cut_off,mol_skip):
 
     sublist_of_mol=ds.get_sublist(mol_skip)
 
-    #number_of_pairs=list(combinations_with_replacement(zbag,2))
 
-    # Getting the atomic part.
-    _xrr=get_bag_rdf_at(sublist_of_mol,elem,zbag,n_points,sigma,cut_off,r_max)
-    #_xrr=np.array([[bag_rdf_at(m,Z[elem],zi,n_points,sigma,cut_off,r_max).T
-    #                        for zi in zbag]
-    #                        for m  in sublist_of_mol
-    #             ])
-    # Getting the directional part.
-    _xdx=get_bag_rdf_dx(sublist_of_mol,elem,zbag,n_points,sigma,cut_off,r_max,direction)
-    #_xdx=np.array([[bag_rdf_dx(m,Z[elem],zi,direction,n_points,sigma,cut_off,r_max).T
-    #                        for zi in zbag]
-    #                        for m  in sublist_of_mol
-    #             ])
-    # Getting the angular part.
-    _ang=get_bag_radf(sublist_of_mol,elem,zbag,n_points,sigma,cut_off,r_max)
-    #_ang=np.array([[bag_radf(m,Z[elem],zi,zj,n_points,sigma,cut_off,r_max).T
-    #                        for zi,zj in number_of_pairs]
-    #                        for m     in sublist_of_mol
-    #             ])/float(len(number_of_pairs)*2)
+    _xrr=get_bag_rdf_at(sublist_of_mol,elem,zbag,n_points,sigma,r_max,cut_off)
+
+    _xdx=get_bag_rdf_dx(sublist_of_mol,elem,zbag,n_points,sigma,r_max,cut_off,direction)
+
+    _ang=get_bag_rdf_an(sublist_of_mol,elem,zbag,n_points,sigma,r_max,cut_off,)
+
 
     x=np.zeros([len(zbag)*2+_ang.shape[1],_ang.shape[0]*_ang.shape[2],n_points])
 
