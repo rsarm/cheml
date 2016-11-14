@@ -36,15 +36,26 @@ def cm(mol):
 def bob(mol,z_list):
     """Bag of bonds from the Coulomb matrix of the molecule mol.
 
-    If the molecules in the dataset have diferent sizes, then
+    If the molecules in the dataset have diferent sizes or
+    different stoichiometry, then
     the function dataset.equalize_mol_sizes() has to be called
-    before using bob.
+    before calling bob.
 
     Here the numpy division by zero is used but the default
     warning is disabled. See:
     http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
+
+    z_list :: list of the atomic numbers of the elements present
+              in the molecules, for instance:
+              C7H10O2 -> z_list=[1.0, 6,0, 8.0].
     """
 
+
+    # I think it is better to leave the user to do this part
+    # computing the bob or cm. Then it doesn't need to be written
+    # in each of the cm/bob related functions, which could
+    # lead to horrible bugs and is easier to develop in case
+    # dataset.equalize_mol_sizes() changes.
     #with np.errstate(divide='ignore', invalid='raise'):
         # invalid refers to 0./0.
         # divide  refers to  x/0. (x!=0.)
@@ -52,11 +63,7 @@ def bob(mol,z_list):
         #cmat[cmat == np.inf] = 0.
         ###cmat = np.nan_to_num(cmat) # Leave this line commented! there can't be nan here.
 
-    np.errstate(divide='ignore', invalid='raise')
     cmat=_descriptor_molecular(mol)
-    cmat[cmat == np.inf] = 0.
-
-    #z_list = np.sort(np.array(list(OrderedDict.fromkeys(mol.z))))
 
     bii=[np.sort(cmat[np.where(mol.z==z1)].T[np.where(mol.z==z1)][np.triu_indices(np.where(mol.z==z1)[0].shape[0],1)])
          for z1 in z_list]
@@ -79,22 +86,14 @@ class M_Molecular(object):
 
 ######################### Functions to by applied to dataset (get_) ######################
 
+
 def get_molecular_cm(ds):
   """xxx."""
 
-  y = np.array([np.array([i.energy,i.N]) for i in ds.list_of_mol])
+  X = np.array([cm(m)[np.triu_indices(m.N)] for m in ds.list_of_mol])
+  y = np.array([m.energy                    for m in ds.list_of_mol])
 
-  lm=int(y[:,1].max()) #size of the larger molecule
-
-  descv=M_Molecular()
-  hsize=(lm*lm+lm)/2
-
-  X=np.zeros([ds.nmol,hsize])
-
-  for i,m in enumerate(ds.list_of_mol):
-    X[i][:(m.N*m.N+m.N)/2] = descv.f(m)
-
-  return X,y[:,0]
+  return X,y
 
 
 
@@ -110,3 +109,31 @@ def get_molecular_bob(ds):
   y = np.array([m.energy      for m in ds.list_of_mol])
 
   return X,y
+
+
+
+
+
+
+
+
+
+
+
+def _get_molecular_cm(ds):
+  """This will disappear soon."""
+
+  y = np.array([np.array([i.energy,i.N]) for i in ds.list_of_mol])
+
+  lm=int(y[:,1].max()) #size of the larger molecule
+
+  #descv=M_Molecular()
+  hsize=(lm*lm+lm)/2
+
+  X=np.zeros([ds.nmol,hsize])
+
+  for i,m in enumerate(ds.list_of_mol):
+    X[i][:(m.N*m.N+m.N)/2] = cm(m)[np.triu_indices(mol.N)]#descv.f(m)
+
+  return X,y[:,0]
+

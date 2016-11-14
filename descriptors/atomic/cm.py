@@ -41,7 +41,7 @@ def get_atomic_cm(ds,element,nelem,col):
   lm=int(np.array([i.N for i in ds.list_of_mol]).max())
 
   y=np.zeros( nelem)
-  X=np.zeros([nelem,(lm*lm+lm)/2.])
+  X=np.zeros([nelem,(lm*lm+lm)/2])
 
   j=0; i=0
   for m in ds.list_of_mol:

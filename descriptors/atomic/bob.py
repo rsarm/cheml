@@ -23,7 +23,7 @@ def _descriptor_atomic(mol,ei):
   for cc,i in enumerate(ei):
       dl=np.linalg.norm(mol.R-mol.R[i],axis=1)
 
-      dl=dl*smr1(dl,2.,6.,2.)  #dl[np.where(dl>3)]=1e5  #Hard cutoff
+      dl=dl#*smr1(dl,2.,6.,2.)
       sorted_order=np.lexsort((dl,mol.z))
 
       zz=mol.z[sorted_order]

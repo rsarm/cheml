@@ -1,19 +1,54 @@
 import numpy as np
 import itertools #for the combination pairs for the angles.
 
-from descriptors.atomic.rdf import rdf_at, bag_rdf_at
-from descriptors.atomic.rdf import rdf_dx, bag_rdf_dx
-from descriptors.atomic.rdf import bag_radf_at
 
 import descriptors.pairwise.pwrdf  as pwrdf
 import descriptors.molecular.bob   as mbob
 import descriptors.molecular.cm    as mcm
 import descriptors.atomic.bob      as abob
 import descriptors.atomic.cm       as acm
+import descriptors.atomic.rdf      as rdf
 
 from atoms import molecule,Z,str_z2s
 
 from collections import OrderedDict
+
+
+
+
+def _find_elem(ds,token):
+    """Once 'list_of_mol' is initialized this function
+    returns a list with the number of times the element 'token'
+    appears in each of the molecules in the dataset.
+    """
+
+    # Using 'X' as name to select all elements.
+    if token=='X':
+        return np.array([m.N for m in ds.list_of_mol])
+
+    nelem=np.array([m.symb.count(token) for m in ds.list_of_mol])
+
+    if nelem.sum()==0: exit('Did not found token '+ token +' in the dataset')
+    return nelem
+
+
+
+def _get_largest_stoich(ds):
+    """Stoichiometry of the largest molecule that
+       comprisses all stoichiometries in the dataset.
+    """
+
+    z_list=np.concatenate([m.z for m in ds.list_of_mol[:]]).flatten()
+
+    elems=np.sort(np.array(list(OrderedDict.fromkeys(z_list))))
+
+    stoic=[ np.array([np.where(m.z==z)[0].shape[0]
+                      for m in ds.list_of_mol[:]]).max() for z in elems]
+
+    return zip(elems,stoic)
+
+
+
 
 class dataset(object):
     """xxx."""
@@ -23,10 +58,15 @@ class dataset(object):
 
 
 
+    def __repr__(self):
+        return 'Class dataset:\ndataset(nmol='+str(self.nmol)+')'
+
+
+
 
     def read_xyz(self,datafile):
         """Returns a list of molecule objects."""
-        from io.xyz       import get_molecules
+        from io.xyz import get_molecules
 
         self.list_of_mol=get_molecules(datafile,self.nmol)
         self.nmol=len(self.list_of_mol)
@@ -34,44 +74,37 @@ class dataset(object):
 
 
 
-    def _find_elem(self,token):
-        """Once 'list_of_mol' is initialized this function
-        returns a list with the number of times the element 'token'
-        appears in each of the molecules in the dataset.
-        """
+    def find_elem(self,token):
+        """xxx."""
 
-        # Using 'X' as name to select all elements
-        if token=='X':
-            return np.array([m.N for m in self.list_of_mol])
-
-        nelem=np.array([m.symb.count(token) for m in self.list_of_mol])
-
-        if nelem.sum()==0: exit('Did not found token '+ token +' in the dataset')
-        return nelem
+        return _find_elem(self,token)
 
 
 
 
     def get_largest_stoich(self):
-        """Stoichiometry of the largest molecule that
-           comprisses all stoichiometries in the dataset.
+        """xxx."""
+
+        return _get_largest_stoich(self)
+
+
+
+
+    def get_sublist(self,skp):
+        """Return a sublist of molecules from self.list_of_mol
+        skiping skp molecules.
         """
 
-        z_list=np.concatenate([m.z for m in self.list_of_mol[:]]).flatten()
-
-        elems=np.sort(np.array(list(OrderedDict.fromkeys(z_list))))
-
-        stoic=[ np.array([np.where(m.z==z)[0].shape[0]
-                          for m in self.list_of_mol[:]]).max() for z in elems]
-
-        return zip(elems,stoic)
+        return np.asarray(self.list_of_mol)[np.arange(0,self.nmol,skp)]
 
 
 
 
-    def equalize_mol_sizes(self,data_kind='fixed'):
+
+    def equalize_mol_sizes(self):
         """Changes self.list_of_mol to a list of molecules
-        which equal size.
+        which equal size and dummy atoms if the stoichiometries or
+        the sizes are not the same in the molecules of the dataset.
 
         The order of the elements in the new extendend molecules
         is allways the same.
@@ -83,32 +116,39 @@ class dataset(object):
         The inverse of the distances between dummy atoms are allways
         used in numpy arrays do they give np.inf, which are then
         changed by zeros dist[dist==np.inf]=0.00000. Because of
-        this is better to use a with statement to get descriptors
-        from the dataset class. For example:
+        this, if the dataset conteains molecules of different sizes,
+        it's better to use a 'with' statement to get the descriptors
+        from the dataset class as:
 
         with np.errstate(divide='ignore', invalid='raise'):
             x,y=ds.get_molecular_cm()
             x[x == np.inf] = 0.
 
-        If there is a nan here, it means that something is wrong.
+        If there is a nan here, it means that something is wrong!
         """
 
         largest_stoi=self.get_largest_stoich()
         ls=sum([i[1] for i in largest_stoi])
 
-        em=np.concatenate([np.array([z,1e3,1e3,1e3]*n).reshape([n,4])
+        em=np.concatenate([np.array([[z,1e3,1e3,1e3]]*n) #.reshape([n,4])
                            for z,n in largest_stoi])
 
         symb=[str_z2s[s] for s in em[:,0].astype(str)]
 
         eqsize_list=[]
 
+        ld=([m.data.shape[1] for m in self.list_of_mol]) #data lenght
+        if max(ld)==min(ld):
+            data_kind='fixed'
+        else:
+            data_kind='variable'
+
         for m in self.list_of_mol:
-            _em=np.copy(em)                        # empty molecule
+            _em=np.copy(em)                        # empty molecule.
             if data_kind=='fixed':
-                _ed=np.zeros([ls,m.data.shape[1]]) # empty data
-            if data_kind=='projections':
-                _ed=np.zeros([ls,ls])              # empty data
+                _ed=np.zeros([ls,m.data.shape[1]]) # empty data. ex. (ls,3) for the forces
+            if data_kind=='variable':
+                _ed=np.zeros([ls,ls])              # empty data. (ls,ls)
 
             for z,n in largest_stoi:
                 _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
@@ -121,7 +161,7 @@ class dataset(object):
             mol=molecule(_em.astype(str))
             mol.get_molecule()
             mol.energy = m.energy
-            mol.symb   = symb  #Otherwise the symbols are strings like '1.0', '6.0'.
+            mol.symb   = symb  # Otherwise the symbols are strings like '1.0', '6.0'.
             mol.data   = _ed
             eqsize_list.append(mol)
 
@@ -131,9 +171,12 @@ class dataset(object):
 
 
 
+
+
     def to_ase(self,nmol=None):
         """Returns a list of nmol ase.atoms.Atoms objects
-        that is not bound to the class dataset."""
+        that is not bound to the class dataset.
+        """
         from io.ml_to_ase import to_ase
 
         return to_ase(self,nmol=nmol)
@@ -143,7 +186,8 @@ class dataset(object):
 
     def to_pyscf(self,nmol=None):
         """Returns a list of nmol ase.gto.Mole objects
-        that is not bound to the class dataset."""
+        that is not bound to the class dataset.
+        """
         from io.ml_to_pyscf import to_pyscf
 
         return to_pyscf(self,nmol)
@@ -161,7 +205,7 @@ class dataset(object):
 
 
     def get_molecular_bob_slow(self):
-        """xxx."""
+        """Will disappear soon."""
 
         return mbob.get_molecular_bob(self)
 
@@ -169,7 +213,7 @@ class dataset(object):
 
 
     def get_molecular_bob(self):
-        """xxx."""
+        """Construct a bob from a CM."""
 
         return mcm.get_molecular_bob(self)
 
@@ -179,7 +223,7 @@ class dataset(object):
     def get_atomic_bob(self,elem,col=0):
         """xxx."""
 
-        return abob.get_atomic_bob(self,elem,self._find_elem(elem).sum(),col)
+        return abob.get_atomic_bob(self,elem,self.find_elem(elem).sum(),col)
 
 
 
@@ -195,7 +239,17 @@ class dataset(object):
     def get_atomic_cm(self,elem,col=0):
         """xxx."""
 
-        return acm.get_atomic_cm(self,elem,self._find_elem(elem).sum(),col)
+        return acm.get_atomic_cm(self,elem,self.find_elem(elem).sum(),col)
+
+
+
+
+    def get_bag_rdf(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
+                                             r_max=10,cut_off=100.,mol_skip=1):
+        """xxx."""
+
+        return rdf.get_bag_rdf(self,elem,zbag,direction,sigma,n_points,
+                                             r_max,cut_off,mol_skip)
 
 
 
@@ -203,12 +257,10 @@ class dataset(object):
 
 
 
-
-
-
-
-
-
+#############################################
+### Not included in the new version yet #####
+### Can have something wrong ################
+#############################################
 
     def get_bag_RDF(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
                                                    r_max=10,cut_off=100.,mol_skip=1):

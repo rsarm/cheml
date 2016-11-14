@@ -1,8 +1,6 @@
 import numpy as np
 
-from ..atomic.rdf import rdf_at, bag_rdf_at
-from ..atomic.rdf import rdf_dx, bag_rdf_dx
-from ..atomic.rdf import bag_radf_at
+from ..atomic.rdf import bag_rdf_at
 
 #from atoms import Z
 

@@ -8,15 +8,14 @@ import numpy as np
 
 import read_xyz as rxyz  #only needed for write_formated.
 
-from cheml.io                   import xyz
-from cheml                      import dataset, _DATA_FOLDER
+from cheml.io   import xyz
+from cheml      import dataset, _DATA_FOLDER
 
 
 
 
 def decay(r,rc,function=None):
-    #d=r.dot(r)
-
+    """xxx."""
     if function== None:
         return 1.
     if function=='sin':
@@ -53,7 +52,6 @@ def Rmatrix(mol,i,nprj=3):
     so=np.linalg.norm(Ri,axis=1).argsort()
 
     R=np.zeros([mol.N,3])
-    #print so[:4]
 
     for j in so[:nprj+1]:
         R[j]=Rij(i,j)*decay(np.linalg.norm(mol.R[i]-mol.R[j]),3.,function='sin2')
@@ -73,13 +71,6 @@ def prj_print(mol,component,ls):
         print rxyz.write_formated( mol.R[i] ),'    ',
         print rxyz.write_formated( component[:,i] ),
         print rxyz.write_formated(np.zeros(ls-mol.N))
-
-
-
-
-
-
-
 
 
 
