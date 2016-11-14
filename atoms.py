@@ -64,3 +64,6 @@ class molecule(object):
         return np.dot(rotation_matrix(angle, u),self.R.T).T
 
 
+    def rotate_data(self, angle, u):
+        return np.dot(rotation_matrix(angle, u),self.data.T).T
+

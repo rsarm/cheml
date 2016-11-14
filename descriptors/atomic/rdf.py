@@ -28,7 +28,9 @@ def bag_rdf_at(mol,z1,z2,n_points,sigma,r_max,cut_off):
     dm=np.sort(euclidean(mol.R[atom_selection],mol.R[submol]),axis=1)
 
     # Temporary solution to remove the self element, but it is not
-    # really necessary as it doesn't affect the distance.
+    # really necessary as it doesn't affect the distance, only the
+    # visualization.
+
     dm[np.where(dm<=1e-3)]=1e5
 
     spc=np.tile(np.linspace(0.,r_max,n_points),(submol[0].shape[0],1))
@@ -140,11 +142,11 @@ def get_bag_rdf_dx(list_of_mol,elem,zbag,n_points,sigma,r_max,cut_off,direction)
 def get_bag_rdf_an(list_of_mol,elem,zbag,n_points,sigma,r_max,cut_off):
     """xxx."""
 
-    number_of_pairs=list(combinations_with_replacement(zbag,2))
+    atom_pairs=list(combinations_with_replacement(zbag,2))
 
     return np.array([[bag_radf_at(m,Z[elem],zi,zj,n_points,sigma,r_max,cut_off).T
-                            for zi,zj in number_of_pairs] for m in list_of_mol
-                 ])/float(len(number_of_pairs)*2)
+                            for zi,zj in atom_pairs] for m in list_of_mol
+                 ])/float(len(atom_pairs)*4)
 
 
 
@@ -152,7 +154,7 @@ def get_bag_rdf_an(list_of_mol,elem,zbag,n_points,sigma,r_max,cut_off):
 
 def get_bag_rdf(ds,elem,zbag,direction,sigma,n_points,r_max,cut_off,mol_skip):
     """Returns the bags of RDF. This is an array of size
-    nbags = len(zbag)*2 x number_of_pairs(zbags) x n_points array that contains
+    nbags = len(zbag)*2 x atom_pairs(zbags) x n_points array that contains
     all the radial bags, the directional bags (for one direction) and the angular
     bags.
 
@@ -163,22 +165,24 @@ def get_bag_rdf(ds,elem,zbag,direction,sigma,n_points,r_max,cut_off,mol_skip):
 
     sublist_of_mol=ds.get_sublist(mol_skip)
 
-
     _xrr=get_bag_rdf_at(sublist_of_mol,elem,zbag,n_points,sigma,r_max,cut_off)
 
     _xdx=get_bag_rdf_dx(sublist_of_mol,elem,zbag,n_points,sigma,r_max,cut_off,direction)
 
     _ang=get_bag_rdf_an(sublist_of_mol,elem,zbag,n_points,sigma,r_max,cut_off,)
 
+    #print '_xrr',_xrr.shape
+    #print '_xdx',_xdx.shape
+    #print '_ang',_ang.shape
 
     x=np.zeros([len(zbag)*2+_ang.shape[1],_ang.shape[0]*_ang.shape[2],n_points])
 
     # Reshaping.
     for i in range(len(zbag)):
-        x[i]  =_xrr[:,i,:,:].reshape(_xrr.shape[0]*_xrr.shape[2],_xrr.shape[3])
-        x[i+3]=_xdx[:,i,:,:].reshape(_xdx.shape[0]*_xdx.shape[2],_xdx.shape[3])
+        x[i]              =_xrr[:,i,:,:].reshape(_xrr.shape[0]*_xrr.shape[2],_xrr.shape[3])
+        x[i+_xrr.shape[1]]=_xdx[:,i,:,:].reshape(_xdx.shape[0]*_xdx.shape[2],_xdx.shape[3])
     for i in range(_ang.shape[1]):
-        x[i+6]=_ang[:,i,:,:].reshape(_ang.shape[0]*_ang.shape[2],_ang.shape[3])
+        x[i+_ang.shape[1]]=_ang[:,i,:,:].reshape(_ang.shape[0]*_ang.shape[2],_ang.shape[3])
 
     y=np.zeros(_xrr.shape[0]*_xrr.shape[2])
     i=0
