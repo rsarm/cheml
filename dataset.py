@@ -149,18 +149,11 @@ class dataset(object):
 
         eqsize_list=[]
 
-        ld=([m.data.shape[1] for m in self.list_of_mol]) #data lenght
-        if max(ld)==min(ld):
-            data_kind='fixed'
-        else:
-            data_kind='variable'
+        ld=([m.data.shape[1] for m in self.list_of_mol]) #data length
 
         for m in self.list_of_mol:
-            _em=np.copy(em)                        # empty molecule.
-            if data_kind=='fixed':
-                _ed=np.zeros([ls,m.data.shape[1]]) # empty data. ex. (ls,3) for the forces
-            if data_kind=='variable':
-                _ed=np.zeros([ls,ls])              # empty data. (ls,ls)
+            _em=np.copy(em)                    # empty molecule.
+            _ed=np.zeros([ls,m.data.shape[1]]) # empty data.
 
             for z,n in largest_stoi:
                 _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
@@ -168,7 +161,7 @@ class dataset(object):
 
             for z,n in largest_stoi:
                 _ed[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],:]=\
-                                                            m.data[np.where(m.z==z)][:,:ls]
+                                                            m.data[np.where(m.z==z)]
 
             mol=molecule(_em.astype(str))
             mol.get_molecule()
