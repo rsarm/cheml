@@ -142,7 +142,7 @@ class dataset(object):
         largest_stoi=self.get_largest_stoich()
         ls=sum([i[1] for i in largest_stoi])
 
-        em=np.concatenate([np.array([[z,1e3,1e3,1e3]]*n) #.reshape([n,4])
+        em=np.concatenate([np.array([[z,1e3,1e3,1e3]]*n) # empty molecule.
                            for z,n in largest_stoi])
 
         symb=[str_z2s[s] for s in em[:,0].astype(str)]
@@ -152,7 +152,7 @@ class dataset(object):
         ld=([m.data.shape[1] for m in self.list_of_mol]) #data length
 
         for m in self.list_of_mol:
-            _em=np.copy(em)                    # empty molecule.
+            _em=np.copy(em)                    # copy of empty molecule.
             _ed=np.zeros([ls,m.data.shape[1]]) # empty data.
 
             for z,n in largest_stoi:

@@ -171,9 +171,6 @@ def get_bag_rdf(ds,elem,zbag,direction,sigma,n_points,r_max,cut_off,mol_skip):
 
     _ang=get_bag_rdf_an(sublist_of_mol,elem,zbag,n_points,sigma,r_max,cut_off,)
 
-    #print '_xrr',_xrr.shape
-    #print '_xdx',_xdx.shape
-    #print '_ang',_ang.shape
 
     x=np.zeros([len(zbag)*2+_ang.shape[1],_ang.shape[0]*_ang.shape[2],n_points])
 

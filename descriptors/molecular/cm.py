@@ -16,7 +16,7 @@ def _descriptor_molecular(mol):
     zz=np.dot(mol.z[:,np.newaxis], mol.z[:,np.newaxis].T)
     zz=np.eye(mol.N)*(np.power(mol.z,2.4)*0.5-np.power(mol.z,2))+zz
 
-    return zz/rm
+    return rm #zz/rm
 
 
 
@@ -65,10 +65,14 @@ def bob(mol,z_list):
 
     cmat=_descriptor_molecular(mol)
 
-    bii=[np.sort(cmat[np.where(mol.z==z1)].T[np.where(mol.z==z1)][np.triu_indices(np.where(mol.z==z1)[0].shape[0],1)])
+    #bii=[np.sort(cmat[np.where(mol.z==z1)].T[np.where(mol.z==z1)][np.triu_indices(np.where(mol.z==z1)[0].shape[0],1)])
+    #     for z1 in z_list]
+    bii=[np.sort(cmat[mol.z==z1].T[mol.z==z1][np.triu_indices(np.where(mol.z==z1)[0].shape[0],1)])
          for z1 in z_list]
 
-    bij=[np.sort(np.hstack(cmat[np.where(mol.z==z1)[0]].T[np.where(mol.z==z2)[0]]))
+    #bij=[np.sort(np.hstack(cmat[np.where(mol.z==z1)[0]].T[np.where(mol.z==z2)[0]]))
+    #               for z1,z2 in list(combinations(z_list,2))]
+    bij=[np.sort(np.hstack(cmat[mol.z==z1].T[mol.z==z2]))
                    for z1,z2 in list(combinations(z_list,2))]
 
     return np.concatenate(bii+bij)
