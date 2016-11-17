@@ -55,7 +55,7 @@ def bob(mol,z_list):
     # computing the bob or cm. Then it doesn't need to be written
     # in each of the cm/bob related functions, which could
     # lead to horrible bugs and is easier to develop in case
-    # dataset.equalize_mol_sizes() changes.
+    # dataset.equalize_mol_sizes() changes:
     #with np.errstate(divide='ignore', invalid='raise'):
         # invalid refers to 0./0.
         # divide  refers to  x/0. (x!=0.)

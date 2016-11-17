@@ -7,7 +7,7 @@ from cheml.descriptors.base import euclidean
 try:
     from sklearn.metrics.pairwise import manhattan_distances
 except:
-    None
+    pass
 
 
 

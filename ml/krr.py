@@ -1,5 +1,7 @@
 import numpy as np
 
+from scipy.optimize import minimize,basinhopping
+
 from cheml.ml import kernels
 
 
@@ -95,6 +97,97 @@ class krr(object):
         self.kte=self._get_kte(xte,self.xtr)
 
         return np.dot(self.kte,self.coeff)
+
+
+
+
+
+    def _mae(self,gamma,xtr,ytr,xte,yte):
+        """xxx."""
+
+        self.gamma=np.abs(gamma)
+
+        self.fit(xtr,ytr)
+
+        yp=self.predict(xte)
+
+        return np.abs(yte-yp).sum()/yp.shape[0]
+
+
+
+
+
+
+    def optimize_kernel(self,xtr,ytr,xte,yte,gamma0=1e-5,niter=100):
+        """Run a Basin Hopping optimization to find local
+        minima of the MAE in function of the kernel width
+        gamma
+
+        Returns the lowest minima.
+        ."""
+
+        func_args={"args"  :(xtr,ytr,xte,yte),
+                   "method":'Nelder-Mead'}
+
+        res=basinhopping(self._mae,gamma0,minimizer_kwargs=func_args,
+                 #accept_test=mybounds,
+                 #callback=print_fun,
+                 niter=niter
+                )
+        print res.fun
+
+        self.gamma=np.abs(res.x[0])
+
+        return res.x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
