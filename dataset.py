@@ -50,6 +50,73 @@ def _get_largest_stoich(ds):
 
 
 
+def _equalize_mol_sizes(ds):
+    """Changes self.list_of_mol to a list of molecules
+    which equal size and dummy atoms if the stoichiometries or
+    the sizes are not the same in the molecules of the dataset.
+
+    The order of the elements in the new extendend molecules
+    is allways the same.
+
+    The dummy atoms in the smaller
+    molecules have coordinates [1e3, 1e3, 1e3], meaning that
+    they are very far from the actual molecule.
+
+    The inverse of the distances between dummy atoms are allways
+    used in numpy arrays do they give np.inf, which are then
+    changed by zeros dist[dist==np.inf]=0.00000. Because of
+    this, if the dataset conteains molecules of different sizes,
+    it's better to use a 'with' statement to get the descriptors
+    from the dataset class as:
+
+    with np.errstate(divide='ignore', invalid='raise'):
+        x,y=ds.get_molecular_cm()
+        x[x == np.inf] = 0.
+
+    If there is a nan here, it means that something is wrong!
+    """
+
+    largest_stoi=ds.get_largest_stoich()
+    ls=sum([i[1] for i in largest_stoi])
+
+    em=np.concatenate([np.array([[z,1e3,1e3,1e3]]*n) # empty molecule.
+                       for z,n in largest_stoi])
+
+    symb=[str_z2s[s] for s in em[:,0].astype(str)]
+
+    eqsize_list=[]
+
+    ld=([m.data.shape[1] for m in ds.list_of_mol]) #data length
+
+    for m in ds.list_of_mol:
+        _em=np.copy(em)                    # copy of empty molecule.
+        _ed=np.zeros([ls,m.data.shape[1]]) # empty data.
+
+        for z,n in largest_stoi:
+            _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
+                                                        m.R[np.where(m.z==z)]
+
+        for z,n in largest_stoi:
+            _ed[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],:]=\
+                                                        m.data[np.where(m.z==z)]
+
+        mol=molecule(_em.astype(str))
+        mol.get_molecule()
+        mol.energy = m.energy
+        mol.symb   = symb  # Otherwise chemical symbols are strings like '1.0', '6.0'.
+        mol.data   = _ed
+
+        eqsize_list.append(mol)
+
+    return eqsize_list
+
+
+
+
+
+
+
+
 class dataset(object):
     """xxx."""
 
@@ -58,8 +125,10 @@ class dataset(object):
 
 
 
+
     def __repr__(self):
         return 'Class dataset:\ndataset(nmol='+str(self.nmol)+')'
+
 
 
 
@@ -74,10 +143,12 @@ class dataset(object):
 
 
 
+
     def find_elem(self,token):
         """xxx."""
 
         return _find_elem(self,token)
+
 
 
 
@@ -90,13 +161,29 @@ class dataset(object):
 
 
 
+
     def get_sublist(self,skp):
-        """Return a sublist of molecules from self.list_of_mol
+        """Return a sublist of self.list_of_mol by
         skiping skp molecules.
         """
 
         return np.array(self.list_of_mol)[np.arange(0,self.nmol,skp)]
 
+
+
+
+
+    def remove_mols(self,index):
+        """Remove molecule objects from self.list_of_mol.
+
+        index :: list of indices of self.list_of_mol to
+                 be removed. ex. [1,34,50].
+        """
+
+        for i in index:
+            del self.list_of_mol[i]
+
+        self.nmol=len(self.list_of_mol)
 
 
 
@@ -114,64 +201,9 @@ class dataset(object):
 
 
     def equalize_mol_sizes(self):
-        """Changes self.list_of_mol to a list of molecules
-        which equal size and dummy atoms if the stoichiometries or
-        the sizes are not the same in the molecules of the dataset.
+        """xxx."""
 
-        The order of the elements in the new extendend molecules
-        is allways the same.
-
-        The dummy atoms in the smaller
-        molecules have coordinates [1e3, 1e3, 1e3], meaning that
-        they are very far from the actual molecule.
-
-        The inverse of the distances between dummy atoms are allways
-        used in numpy arrays do they give np.inf, which are then
-        changed by zeros dist[dist==np.inf]=0.00000. Because of
-        this, if the dataset conteains molecules of different sizes,
-        it's better to use a 'with' statement to get the descriptors
-        from the dataset class as:
-
-        with np.errstate(divide='ignore', invalid='raise'):
-            x,y=ds.get_molecular_cm()
-            x[x == np.inf] = 0.
-
-        If there is a nan here, it means that something is wrong!
-        """
-
-        largest_stoi=self.get_largest_stoich()
-        ls=sum([i[1] for i in largest_stoi])
-
-        em=np.concatenate([np.array([[z,1e3,1e3,1e3]]*n) # empty molecule.
-                           for z,n in largest_stoi])
-
-        symb=[str_z2s[s] for s in em[:,0].astype(str)]
-
-        eqsize_list=[]
-
-        ld=([m.data.shape[1] for m in self.list_of_mol]) #data length
-
-        for m in self.list_of_mol:
-            _em=np.copy(em)                    # copy of empty molecule.
-            _ed=np.zeros([ls,m.data.shape[1]]) # empty data.
-
-            for z,n in largest_stoi:
-                _em[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],1:]=\
-                                                            m.R[np.where(m.z==z)]
-
-            for z,n in largest_stoi:
-                _ed[np.where(_em[:,0]==z)[0][:np.where(m.z==z)[0].shape[0]],:]=\
-                                                            m.data[np.where(m.z==z)]
-
-            mol=molecule(_em.astype(str))
-            mol.get_molecule()
-            mol.energy = m.energy
-            mol.symb   = symb  # Otherwise the symbols are strings like '1.0', '6.0'.
-            mol.data   = _ed
-            eqsize_list.append(mol)
-
-        self.list_of_mol=eqsize_list
-        self.nmol=len(self.list_of_mol)
+        self.list_of_mol = _equalize_mol_sizes(self)
 
 
 
@@ -191,7 +223,7 @@ class dataset(object):
 
 
     def to_pyscf(self,nmol=None):
-        """Returns a list of nmol ase.gto.Mole objects
+        """Returns a list of nmol pyscf.gto.Mole objects
         that is not bound to the class dataset.
         """
         from io.ml_to_pyscf import to_pyscf
@@ -258,11 +290,11 @@ class dataset(object):
 
 
     def get_bag_rdf(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
-                                             r_max=10,cut_off=100.,mol_skip=1):
+                                                 r_max=10,cut_off=100.,mol_skip=1):
         """xxx."""
 
         return rdf.get_bag_rdf(self,elem,zbag,direction,sigma,n_points,
-                                             r_max,cut_off,mol_skip)
+                                              r_max,cut_off,mol_skip)
 
 
 

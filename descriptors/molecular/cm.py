@@ -16,7 +16,7 @@ def _descriptor_molecular(mol):
     zz=np.dot(mol.z[:,np.newaxis], mol.z[:,np.newaxis].T)
     zz=np.eye(mol.N)*(np.power(mol.z,2.4)*0.5-np.power(mol.z,2))+zz
 
-    return rm #zz/rm
+    return zz/rm
 
 
 

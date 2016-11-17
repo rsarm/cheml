@@ -1,17 +1,4 @@
-#!/home/rsarmiento/anaconda2/bin/python
-
-# Script to calculate the projections of the force or vectorial 3d properties in general
-# on the interatomic distances weighted by different functions.
-
-import sys
 import numpy as np
-
-import read_xyz as rxyz  #only needed for write_formated.
-
-from cheml.io   import xyz
-from cheml      import dataset, _DATA_FOLDER
-
-
 
 
 def decay(r,rc,function=None):
@@ -32,13 +19,15 @@ def decay(r,rc,function=None):
 
 
 def Rij(i,j):
-    """Vector Z_i*Z_j/R_ij^2 from atom j to atom i."""
+    """Vector from atom j to atom i.
+    """
+
     if i==j:
         return np.array([0.,0.,0.])
 
     r=mol.R[i]-mol.R[j]
 
-    return r#*np.power(r.dot(r),-2) #*mol.z[i]*mol.z[j]
+    return r
 
 
 
