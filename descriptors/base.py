@@ -20,9 +20,13 @@ def smr1(x,x0,n,sigma):
 
 
 
+
 def euclidean(x,y):
     """Euclidean distance matrix using:
     (x-y)^2 = x.x + y.y - 2*x.y
+
+    this is much faster than the scipy
+    distance.cdist(x, y, 'cityblock'
     """
 
     xx=np.einsum('ij,ij->i', x,x)[:, np.newaxis]
@@ -34,9 +38,13 @@ def euclidean(x,y):
 
 
 
+
 def manhattan(x,y):
     """Manhattan (cityblock) distance matrix
     from scipy.
+
+    distance.cdist(x, y, 'cityblock') is 50%
+    faster than my implementation with numba.
     """
 
     return distance.cdist(x, y, 'cityblock') #scipy
@@ -50,7 +58,7 @@ def manhattan(x,y):
 
 
 
-#### manhatan with numba for test purposes ####
+#### manhatan with numba for speed comparison ####
 #try:
     #from numba import jit
 #except:
