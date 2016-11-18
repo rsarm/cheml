@@ -1,5 +1,7 @@
 import numpy as np
 
+from scipy.spatial import distance
+
 
 
 
@@ -9,12 +11,12 @@ Z={'X':0.,'H':1.,'C':6.,'N':7.,'O':8.,'F':9.,'Cu':29.}
 
 
 def smr1(x,x0,n,sigma):
-  """
-  This is the inverse of the smearing function::
-  f = 1/[ 100*s*[exp(x-x0)]^n + 1 ]
-  """
+    """
+    This is the inverse of the smearing function::
+    f = 1/[ 100*s*[exp(x-x0)]^n + 1 ]
+    """
 
-  return np.exp(x-x0)**n*100.*sigma + 1.
+    return np.exp(x-x0)**n*100.*sigma + 1.
 
 
 
@@ -30,4 +32,49 @@ def euclidean(x,y):
 
     return np.sqrt(np.abs(xx+yy-2.*xy))
 
+
+
+def manhattan(x,y):
+    """Manhattan (cityblock) distance matrix
+    from scipy.
+    """
+
+    return distance.cdist(x, y, 'cityblock') #scipy
+
+
+
+
+
+
+
+
+
+
+#### manhatan with numba for test purposes ####
+#try:
+    #from numba import jit
+#except:
+    #pass
+
+
+#@jit(nopython = True,nogil=True)
+#def _cityblock(x,y,x_shape,y_shape,n_comp,d):
+    #"""Cityblock distance matrix to be used with
+    #numba @jit(nopython = True,nogil=True).
+    #"""
+
+    #for i in range(x_shape):
+        #for j in range(y_shape):
+            #for a in range(n_comp):
+                #d[i,j]+=np.abs(x[i][a]-y[j][a])
+
+    #return d
+
+
+#def manhattan(x,y):
+    #"""Manhattan (cityblock) distance matrix.
+    #"""
+
+    #d=np.empty([x.shape[0],y.shape[0]])
+    #return _cityblock(x,y,x.shape[0],y.shape[0],x.shape[1],d)
 

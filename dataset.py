@@ -2,14 +2,15 @@ import numpy as np
 import itertools #for the combination pairs for the angles.
 
 
-import descriptors.pairwise.pwrdf  as pwrdf
-import descriptors.molecular.bob   as mbob
-import descriptors.molecular.cm    as mcm
-import descriptors.atomic.bob      as abob
-import descriptors.atomic.cm       as acm
-import descriptors.atomic.rdf      as rdf
+import cheml.descriptors.pairwise.pwrdf  as pwrdf
+import cheml.descriptors.molecular.bob   as mbob
+import cheml.descriptors.molecular.cm    as mcm
+import cheml.descriptors.atomic.bob      as abob
+import cheml.descriptors.atomic.cm       as acm
+import cheml.descriptors.atomic.dcm      as dcm
+import cheml.descriptors.atomic.rdf      as rdf
 
-from atoms import molecule,Z,str_z2s
+from   cheml.atoms import molecule,Z,str_z2s
 
 from collections import OrderedDict
 
@@ -289,12 +290,47 @@ class dataset(object):
 
 
 
+
+    def get_atomic_dcm(self,elem,col=0):
+        """xxx."""
+
+        return dcm.get_atomic_dcm(self,elem,self.find_elem(elem).sum(),col)
+
+
+
+
+
+
+
     def get_bag_rdf(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
                                                  r_max=10,cut_off=100.,mol_skip=1):
         """xxx."""
 
         return rdf.get_bag_rdf(self,elem,zbag,direction,sigma,n_points,
                                               r_max,cut_off,mol_skip)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

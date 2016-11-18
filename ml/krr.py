@@ -23,13 +23,6 @@ class krr(object):
             raise ValueError("Kernel \'"+self.kernel+"\' not implemented.")
                   # or NotImplementedError
 
-        if self.kernel=='laplacian':
-            try:
-                from sklearn.metrics.pairwise import manhattan_distances
-            except:
-                raise ValueError("The Laplacian kernel needs sklearn.")
-
-
 
 
 
