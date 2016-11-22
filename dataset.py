@@ -2,13 +2,15 @@ import numpy as np
 import itertools #for the combination pairs for the angles.
 
 
-import cheml.descriptors.pairwise.pwrdf  as pwrdf
 import cheml.descriptors.molecular.bob   as mbob
 import cheml.descriptors.molecular.cm    as mcm
 import cheml.descriptors.atomic.bob      as abob
 import cheml.descriptors.atomic.cm       as acm
 import cheml.descriptors.atomic.dcm      as dcm
-import cheml.descriptors.atomic.rdf      as rdf
+
+#import cheml.descriptors.pairwise.pwrdf  as pwrdf
+#import cheml.descriptors.atomic.rdf      as rdf
+
 
 from   cheml.atoms import molecule,Z,str_z2s
 
@@ -235,16 +237,6 @@ class dataset(object):
 
 
 
-    def get_pairwise_rdf(self,elem,zbag=[1.0,6.0,8.0],sigma=1.,n_points=200,
-                              r_max=10,cut_off=100.,mol_skip=1):
-        """xxx."""
-        return pwrdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
-                                                      r_max,cut_off,mol_skip)
-
-
-
-
-
     def get_molecular_bob_slow(self):
         """Will disappear soon."""
 
@@ -302,12 +294,6 @@ class dataset(object):
 
 
 
-    def get_bag_rdf(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
-                                                 r_max=10,cut_off=100.,mol_skip=1):
-        """xxx."""
-
-        return rdf.get_bag_rdf(self,elem,zbag,direction,sigma,n_points,
-                                              r_max,cut_off,mol_skip)
 
 
 
@@ -315,26 +301,15 @@ class dataset(object):
 
 
 
+    #def get_bag_rdf(self,elem,zbag=[1.0,6.0,8.0],direction=0,sigma=1.,n_points=200,
+    #                                             r_max=10,cut_off=100.,mol_skip=1):
+    #    """xxx."""
 
+    #    return rdf.get_bag_rdf(self,elem,zbag,direction,sigma,n_points,
+    #                                          r_max,cut_off,mol_skip)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #def get_pairwise_rdf(self,elem,zbag=[1.0,6.0,8.0],sigma=1.,n_points=200,
+    #                          r_max=10,cut_off=100.,mol_skip=1):
+    #    """xxx."""
+    #    return pwrdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
+    #                                                  r_max,cut_off,mol_skip)

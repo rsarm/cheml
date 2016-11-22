@@ -27,8 +27,8 @@ def _descriptor(mol,ei,direction):
 
     so=rm.argsort(axis=1)
 
-    return np.array([cm[so][i].T[so][i][np.triu_indices(mol.N)] for i in ei])
-
+    return np.array([cm[so[i]].T[so[i]][np.triu_indices(mol.N)] for i in ei])
+    #return np.array([cm[so][i].T[so][i][np.triu_indices(mol.N)] for i in ei]) remove this!
 
 
 
@@ -56,7 +56,7 @@ def get_atomic_dcm(ds,element,nelem,col):
           y[j]=e
           j+=1
 
-      cm=_descriptor(m,np.where(m.z==Z[element])[0],col)
+      cm=_descriptor(m, np.where(m.z==Z[element])[0], col)
       X[i:i+cm.shape[0],:cm.shape[1]]=cm
       i+=cm.shape[0]
 

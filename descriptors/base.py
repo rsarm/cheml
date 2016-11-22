@@ -21,12 +21,12 @@ def smr1(x,x0,n,sigma):
 
 
 
-def euclidean(x,y):
+def euclidean2(x,y):
     """Euclidean distance matrix using:
     (x-y)^2 = x.x + y.y - 2*x.y
 
     this is much faster than the scipy
-    distance.cdist(x, y, 'cityblock'
+    distance.cdist(x, y, 'euclidean')
     """
 
     xx=np.einsum('ij,ij->i', x,x)[:, np.newaxis]
@@ -34,7 +34,18 @@ def euclidean(x,y):
 
     xy=np.dot(x,y.T)
 
-    return np.sqrt(np.abs(xx+yy-2.*xy))
+    return np.abs(xx+yy-2.*xy) # to avoid small negatives
+
+
+
+
+def euclidean(x,y):
+    """Sqrt of the euclidean distance matrix.
+
+    Only to have a faster euclidean2 function.
+    """
+
+    return np.sqrt(euclidean2(x,y))
 
 
 
@@ -48,6 +59,13 @@ def manhattan(x,y):
     """
 
     return distance.cdist(x, y, 'cityblock') #scipy
+
+
+
+
+
+
+
 
 
 

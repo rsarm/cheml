@@ -1,13 +1,13 @@
 import numpy as np
 
-from cheml.descriptors.base import euclidean, manhattan
+from cheml.descriptors.base import euclidean2, manhattan
 
 
 
 def rbf_kernel(x,y,gamma):
     """xxx."""
 
-    return np.exp(-gamma*euclidean(x,y))
+    return np.exp(-gamma*euclidean2(x,y))
 
 
 
