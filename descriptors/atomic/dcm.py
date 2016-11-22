@@ -28,7 +28,6 @@ def _descriptor(mol,ei,direction):
     so=rm.argsort(axis=1)
 
     return np.array([cm[so[i]].T[so[i]][np.triu_indices(mol.N)] for i in ei])
-    #return np.array([cm[so][i].T[so][i][np.triu_indices(mol.N)] for i in ei]) remove this!
 
 
 

@@ -5,6 +5,7 @@ from scipy.spatial import distance
 
 
 
+
 Z={'X':0.,'H':1.,'C':6.,'N':7.,'O':8.,'F':9.,'Cu':29.}
 
 
@@ -103,4 +104,3 @@ def manhattan(x,y):
 
     #d=np.empty([x.shape[0],y.shape[0]])
     #return _cityblock(x,y,x.shape[0],y.shape[0],x.shape[1],d)
-
