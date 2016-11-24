@@ -45,36 +45,26 @@ def _grep_elem(token,datafile):
     for line in datafile:
         if re.search(token,line): c+=1
     if c==0:
-        print 'Did not found token',token,'in the dataset.'
-        exit()
+        raise ValueError('Did not found token',token,'in the dataset.')
+
     return c
 
 
-#def _find_elem(token):
-#    """Once 'list_of_mol' is initialized this function
-#    returns a list with the number of times the element 'token'
-#    appears in each of the molecules in the dataset.
-#
-#    Notice that it doesn't look in datafile but in
-#    'list_of_mol' through the .symb atribute.
-#    """
-#
-#    nelem=np.array([m.symb.count(token) for m in list_of_mol])
-#
-#    if nelem.sum()==0: exit('Did not found token '+ token +' in the dataset')
-#    return nelem
-
-
-def get_molecules(datafile,nmol=None):
+def get_molecules(_datafile,nmol,long_format):
     """This function initializes 'list_of_mol' which is the
     list of umols from the .xyz file.
 
     The number of molecule this function is going to parse
     depends of 'nmol' defined by user."""
 
+    if long_format==True:
+        extra_lines=5
+    else:
+        extra_lines=2
+
     list_of_mol=[]
 
-    datafile = _get_block(datafile)
+    datafile = _get_block(_datafile)
 
     if nmol==None:
       nmol = _grep_elem('Mol',datafile)
@@ -89,11 +79,12 @@ def get_molecules(datafile,nmol=None):
 
       mol=molecule(atomic_data_str)
       mol.get_molecule()
-      mol.energy=float(datafile[line+1].split()[1])
+      #mol.energy=float(datafile[line+1].split()[1])
+      mol.energy=np.array(datafile[line+1].split()[1:]).astype(float)
 
       list_of_mol.append(mol)
 
-      line+=nat+2
+      line+=nat+extra_lines
       _nmol+=1
 
     return list_of_mol

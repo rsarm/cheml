@@ -57,7 +57,7 @@ class molecule(object):
 
 
     def distance(self,atom_i,atom_j):
-         return np.linalg.norm(self.R[atom_i]-self.R[atom_j])
+        return np.linalg.norm(self.R[atom_i]-self.R[atom_j])
 
 
     def rotate(self, angle, u):

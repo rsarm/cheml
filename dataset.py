@@ -121,6 +121,11 @@ def _equalize_mol_sizes(ds):
 
 
 
+
+
+
+
+
 class dataset(object):
     """xxx."""
 
@@ -137,11 +142,11 @@ class dataset(object):
 
 
 
-    def read_xyz(self,datafile):
+    def read_xyz(self,datafile,long_format=False):
         """Returns a list of molecule objects."""
         from io.xyz import get_molecules
 
-        self.list_of_mol=get_molecules(datafile,self.nmol)
+        self.list_of_mol=get_molecules(datafile,self.nmol,long_format)
         self.nmol=len(self.list_of_mol)
 
 
