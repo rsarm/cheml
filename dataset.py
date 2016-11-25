@@ -243,19 +243,12 @@ class dataset(object):
 
 
 
-    def get_molecular_bob_slow(self):
-        """Will disappear soon."""
-
-        return mbob.get_molecular_bob(self)
-
-
-
-
 
     def get_molecular_bob(self):
         """Construct a bob from a CM."""
 
-        return mcm.get_molecular_bob(self)
+        return mbob.get_molecular_bob(self)
+
 
 
 
