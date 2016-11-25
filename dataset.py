@@ -20,6 +20,9 @@ from collections import OrderedDict
 
 
 
+
+
+
 def _find_elem(ds,token):
     """Once 'list_of_mol' is initialized this function
     returns a list with the number of times the element 'token'
@@ -113,10 +116,6 @@ def _equalize_mol_sizes(ds):
         eqsize_list.append(mol)
 
     return eqsize_list
-
-
-
-
 
 
 
@@ -269,8 +268,11 @@ class dataset(object):
         if sorting.lower()=='norm':
             return mcm.get_molecular_cm_norm(self)
 
-        if sorting.lower()=='random':
+        if sorting.lower()=='rand':
             return mcm.get_molecular_cm_rand(self)
+
+        if sorting.lower()=='eigv':
+            return mcm.get_molecular_cm_eigv(self)
 
 
 
@@ -290,6 +292,19 @@ class dataset(object):
         """xxx."""
 
         return dcm.get_atomic_dcm(self,elem,self.find_elem(elem).sum(),col)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -54,6 +54,16 @@ def cm_rand_order(mol):
 
 
 
+def cm_eigenval(mol):
+    """Norm-ordered Coulomb matrix of molecule mol."""
+
+    cmat=_descriptor_base(mol)
+
+    return np.linalg.eigvals(cmat)
+
+
+
+
 ######################### Functions to by applied to dataset (get_) ######################
 
 
@@ -61,7 +71,7 @@ def get_molecular_cm_norm(ds):
   """xxx."""
 
   X = np.array([cm_norm_order(m)[np.triu_indices(m.N)] for m in ds.list_of_mol])
-  y = np.array([m.energy                    for m in ds.list_of_mol])
+  y = np.array([m.energy                               for m in ds.list_of_mol])
 
   return X,y
 
@@ -73,13 +83,21 @@ def get_molecular_cm_rand(ds):
   """xxx."""
 
   X = np.array([cm_rand_order(m)[np.triu_indices(m.N)] for m in ds.list_of_mol])
-  y = np.array([m.energy                    for m in ds.list_of_mol])
+  y = np.array([m.energy                               for m in ds.list_of_mol])
 
   return X,y
 
 
 
 
+
+def get_molecular_cm_eigv(ds):
+  """xxx."""
+
+  X = np.array([cm_eigenval(m) for m in ds.list_of_mol])
+  y = np.array([m.energy       for m in ds.list_of_mol])
+
+  return np.sort(X,axis=1),y
 
 
 
