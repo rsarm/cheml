@@ -270,10 +270,14 @@ class dataset(object):
 
 
 
-    def get_molecular_cm(self):
+    def get_molecular_cm(self,sorting='norm'):
         """xxx."""
 
-        return mcm.get_molecular_cm(self)
+        if sorting.lower()=='norm':
+            return mcm.get_molecular_cm_norm(self)
+
+        if sorting.lower()=='random':
+            return mcm.get_molecular_cm_rand(self)
 
 
 

@@ -5,10 +5,16 @@ from ..base import euclidean
 from collections import OrderedDict
 from itertools   import combinations#, combinations_with_replacement
 
+
+
+
 ################################## Basic functions #######################################
 
 
-def _descriptor_molecular(mol):
+
+
+
+def _descriptor_base(mol):
     """Non-ordered Coulomb matrix of molecule mol."""
 
     rm=euclidean(mol.R,mol.R)+np.eye(mol.N)
@@ -21,14 +27,30 @@ def _descriptor_molecular(mol):
 
 
 
-def cm(mol):
+
+def cm_norm_order(mol):
     """Norm-ordered Coulomb matrix of molecule mol."""
 
-    cmat=_descriptor_molecular(mol)
+    cmat=_descriptor_base(mol)
 
     so=np.linalg.norm(cmat,axis=1).argsort()[::-1]
 
     return cmat[so].T[so]
+
+
+
+
+
+def cm_rand_order(mol):
+    """Norm-ordered Coulomb matrix of molecule mol."""
+
+    cmat=_descriptor_base(mol)
+
+    so=np.arange(mol.N)
+    np.random.shuffle(so)
+
+    return cmat[so].T[so]
+
 
 
 
@@ -59,11 +81,11 @@ def bob(mol,z_list):
     #with np.errstate(divide='ignore', invalid='raise'):
         # invalid refers to 0./0.
         # divide  refers to  x/0. (x!=0.)
-        #cmat=_descriptor_molecular(mol)
+        #cmat=_descriptor_base(mol)
         #cmat[cmat == np.inf] = 0.
         ###cmat = np.nan_to_num(cmat) # Leave this line commented! there can't be nan here.
 
-    cmat=_descriptor_molecular(mol)
+    cmat=_descriptor_base(mol)
 
     #bii=[np.sort(cmat[np.where(mol.z==z1)].T[np.where(mol.z==z1)][np.triu_indices(np.where(mol.z==z1)[0].shape[0],1)])
     #     for z1 in z_list]
@@ -80,24 +102,32 @@ def bob(mol,z_list):
 
 
 
-################################### Classes ##############################################
-
-class M_Molecular(object):
-  def f(self,mol):
-    return _descriptor_molecular(mol)[np.triu_indices(mol.N)]
 
 
 
 ######################### Functions to by applied to dataset (get_) ######################
 
 
-def get_molecular_cm(ds):
+def get_molecular_cm_norm(ds):
   """xxx."""
 
-  X = np.array([cm(m)[np.triu_indices(m.N)] for m in ds.list_of_mol])
+  X = np.array([cm_norm_order(m)[np.triu_indices(m.N)] for m in ds.list_of_mol])
   y = np.array([m.energy                    for m in ds.list_of_mol])
 
   return X,y
+
+
+
+
+
+def get_molecular_cm_rand(ds):
+  """xxx."""
+
+  X = np.array([cm_rand_order(m)[np.triu_indices(m.N)] for m in ds.list_of_mol])
+  y = np.array([m.energy                    for m in ds.list_of_mol])
+
+  return X,y
+
 
 
 
@@ -124,20 +154,10 @@ def get_molecular_bob(ds):
 
 
 
-def _get_molecular_cm(ds):
-  """This will disappear soon."""
 
-  y = np.array([np.array([i.energy,i.N]) for i in ds.list_of_mol])
 
-  lm=int(y[:,1].max()) #size of the larger molecule
+################################### Classes ##############################################
 
-  #descv=M_Molecular()
-  hsize=(lm*lm+lm)/2
-
-  X=np.zeros([ds.nmol,hsize])
-
-  for i,m in enumerate(ds.list_of_mol):
-    X[i][:(m.N*m.N+m.N)/2] = cm(m)[np.triu_indices(mol.N)]#descv.f(m)
-
-  return X,y[:,0]
-
+class M_Molecular(object):
+  def f(self,mol):
+    return _descriptor_base(mol)[np.triu_indices(mol.N)]
