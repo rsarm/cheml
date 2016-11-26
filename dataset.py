@@ -9,7 +9,7 @@ import cheml.descriptors.atomic.cm       as acm
 import cheml.descriptors.atomic.dcm      as dcm
 
 from cheml.tools.pt import Z, str_z2s
-
+from cheml.atoms    import molecule
 
 
 from collections import OrderedDict
