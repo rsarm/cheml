@@ -1,7 +1,7 @@
 import numpy as np
 
-from cheml.descriptors.base import euclidean2, manhattan
 
+from cheml.tools.metrics  import euclidean2, manhattan
 
 
 

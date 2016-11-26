@@ -1,12 +1,10 @@
 import numpy as np
 
+from cheml.tools.pt import Z, str_z2s
 
 
-Z={'X'  :0,
-   'H'  :1., 'C'  :6., 'N'  :7., 'O'  :8. , 'F'  :9., 'Cu'  :29.,
-   '1.0':1., '6.0':6., '7.0':7., '8.0':8. , '9.0':9., '29.0':29.}
 
-str_z2s={'1.0':'H', '6.0':'C', '7.0':'N', '8.0':'O', '9.0':'F', '29.0':'Cu'}
+
 
 def rotation_matrix(theta, u):
     u = u / np.linalg.norm(u)
@@ -26,7 +24,7 @@ def rotation_matrix(theta, u):
 class molecule(object):
     """Objects of class molecule have  the common molecular
     attibutes: atomic coordinates, number of atoms, Z, etc,
-    but they also have global data like energy, and atomic 
+    but they also have global data like energy, and atomic
     data, like forces and charges.
 
     In this implementation, the molecule instances are
@@ -66,4 +64,3 @@ class molecule(object):
 
     def rotate_data(self, angle, u):
         return np.dot(rotation_matrix(angle, u),self.data.T).T
-

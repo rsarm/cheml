@@ -8,12 +8,9 @@ import cheml.descriptors.atomic.bob      as abob
 import cheml.descriptors.atomic.cm       as acm
 import cheml.descriptors.atomic.dcm      as dcm
 
-
-#import cheml.descriptors.pairwise.pwrdf  as pwrdf
-#import cheml.descriptors.atomic.rdf      as rdf
+from cheml.tools.pt import Z, str_z2s
 
 
-from   cheml.atoms import molecule,Z,str_z2s
 
 from collections import OrderedDict
 

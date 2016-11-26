@@ -1,6 +1,7 @@
 import numpy as np
 
-from ..base import Z, smr1
+from cheml.descriptors.base import smr1
+from cheml.tools.pt        import Z
 
 
 

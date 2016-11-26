@@ -1,7 +1,7 @@
 import numpy as np
 
-from ..base import euclidean,Z
-
+from cheml.tools.pt     import Z
+from cheml.tools.metrics import euclidean
 
 
 ################################## Basic functions #######################################

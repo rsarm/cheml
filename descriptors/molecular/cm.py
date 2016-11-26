@@ -1,7 +1,7 @@
 import numpy as np
 
-from ..base import euclidean
 
+from cheml.tools.metrics import euclidean
 
 
 
