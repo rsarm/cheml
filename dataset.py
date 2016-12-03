@@ -215,13 +215,13 @@ class dataset(object):
 
 
 
-    def to_ase(self,nmol=None):
+    def to_ase(self,nmol=None,sublist=None):
         """Returns a list of nmol ase.atoms.Atoms objects
         that is not bound to the class dataset.
         """
-        from io.ml_to_ase import to_ase
+        from io.cml_to_ase import to_ase
 
-        return to_ase(self,nmol=nmol)
+        return to_ase(self,nmol,sublist)
 
 
 
@@ -231,7 +231,7 @@ class dataset(object):
         """Returns a list of nmol pyscf.gto.Mole objects
         that is not bound to the class dataset.
         """
-        from io.ml_to_pyscf import to_pyscf
+        from io.cml_to_pyscf import to_pyscf
 
         return to_pyscf(self,nmol)
 
