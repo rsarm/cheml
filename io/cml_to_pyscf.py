@@ -1,7 +1,7 @@
 from pyscf import gto, scf, grad
 
 
-def to_pyscf(ds,nmol):
+def to_pyscf(ds,nmol,bs):
     """Returns a list of nmol pyscf.gto.Mole objects."""
     list_of_mol=[]
 
@@ -11,7 +11,7 @@ def to_pyscf(ds,nmol):
     for m in ds.list_of_mol[:nmol]:
         mol = gto.Mole()
         mol.atom = [[m.symb[n],tuple([i for i in m.R[n]])] for n in range(m.N)]
-        mol.basis = 'sto-3g'
+        mol.basis = bs
         mol.build()
         
         list_of_mol.append(mol)

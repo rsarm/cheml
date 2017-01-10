@@ -227,13 +227,13 @@ class dataset(object):
 
 
 
-    def to_pyscf(self,nmol=None):
+    def to_pyscf(self,nmol=None,bs='sto-3g'):
         """Returns a list of nmol pyscf.gto.Mole objects
         that is not bound to the class dataset.
         """
         from io.cml_to_pyscf import to_pyscf
 
-        return to_pyscf(self,nmol)
+        return to_pyscf(self,nmol,bs)
 
 
 
