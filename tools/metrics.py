@@ -1,6 +1,6 @@
 import numpy as np
 
-from scipy.spatial import distance
+from scipy.spatial.distance import cdist
 
 
 
@@ -45,7 +45,7 @@ def manhattan(x,y):
     faster than my implementation with numba.
     """
 
-    return distance.cdist(x, y, 'cityblock') #scipy
+    return cdist(x, y, 'cityblock') #scipy
 
 
 
