@@ -21,8 +21,12 @@ class krr(object):
                              'laplacian',
                              'multiquadric_euclidean','mql2',
                              'multiquadric_cityblock','mql1',
+                             'inv_multiquadric_euclidean','imql2',
+                             'inv_multiquadric_cityblock','imql1',
                              'rational_euclidean','ratl2',
-                             'rational_cityblock','ratl1']
+                             'rational_cityblock','ratl1',
+                             'spherical_cityblock','sphl1',
+                             'spherical_euclidean','sphl2']
 
         if self.kernel not in implemented_kernels:
             raise ValueError("Kernel \'"+self.kernel+"\' not implemented.")
@@ -59,12 +63,23 @@ class krr(object):
         if self.kernel=='multiquadric_cityblock' or self.kernel=='mql1':
             return kernels.multiquadric_cityblock_kernel(xi,xj,self.c)
 
+        if self.kernel=='inv_multiquadric_euclidean' or self.kernel=='imql2':
+            return kernels.inv_multiquadric_euclidean_kernel(xi,xj,self.c)
+
+        if self.kernel=='inv_multiquadric_cityblock' or self.kernel=='imql1':
+            return kernels.inv_multiquadric_cityblock_kernel(xi,xj,self.c)
+
         if self.kernel=='rational_euclidean' or self.kernel=='ratl2':
             return kernels.rational_euclidean_kernel(xi,xj,self.c)
 
         if self.kernel=='rational_cityblock' or self.kernel=='ratl1':
             return kernels.rational_cityblock_kernel(xi,xj,self.c)
 
+        if self.kernel=='spherical_cityblock' or self.kernel=='sphl1':
+            return kernels.spherical_cityblock_kernel(xi,xj,self.gamma)
+
+        if self.kernel=='spherical_euclidean' or self.kernel=='sphl2':
+            return kernels.spherical_euclidean_kernel(xi,xj,self.gamma)
 
     def _get_ktr(self,xtr):
         """Return the kernel of a dataset to itself."""
