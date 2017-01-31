@@ -11,13 +11,18 @@ from cheml.ml import kernels
 class krr(object):
     """Kernel Ridge Regressor."""
 
-    def __init__(self,kernel,gamma,alpha=1e-10):
+    def __init__(self,kernel,alpha=1e-10,gamma=1e-5,c=1e-5):
         self.kernel = kernel.lower()
         self.gamma  = gamma
         self.alpha  = alpha
+        self.c      = c
 
         implemented_kernels=['rbf','gaussian',
-                             'laplacian']
+                             'laplacian',
+                             'multiquadric_euclidean','mql2',
+                             'multiquadric_cityblock','mql1',
+                             'rational_euclidean','ratl2',
+                             'rational_cityblock','ratl1']
 
         if self.kernel not in implemented_kernels:
             raise ValueError("Kernel \'"+self.kernel+"\' not implemented.")
@@ -48,8 +53,17 @@ class krr(object):
         if self.kernel=='laplacian':
             return kernels.laplacian_kernel(xi,xj,self.gamma)
 
+        if self.kernel=='multiquadric_euclidean' or self.kernel=='mql2':
+            return kernels.multiquadric_euclidean_kernel(xi,xj,self.c)
 
+        if self.kernel=='multiquadric_cityblock' or self.kernel=='mql1':
+            return kernels.multiquadric_cityblock_kernel(xi,xj,self.c)
 
+        if self.kernel=='rational_euclidean' or self.kernel=='ratl2':
+            return kernels.rational_euclidean_kernel(xi,xj,self.c)
+
+        if self.kernel=='rational_cityblock' or self.kernel=='ratl1':
+            return kernels.rational_cityblock_kernel(xi,xj,self.c)
 
 
     def _get_ktr(self,xtr):
