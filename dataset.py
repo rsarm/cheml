@@ -91,7 +91,7 @@ def _equalize_mol_sizes(ds):
 
     eqsize_list=[]
 
-    ld=([m.data.shape[1] for m in ds.list_of_mol]) #data length
+    #ld=([m.data.shape[1] for m in ds.list_of_mol]) #data length
 
     for m in ds.list_of_mol:
         _em=np.copy(em)                    # copy of empty molecule.
