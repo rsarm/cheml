@@ -2,18 +2,45 @@ import numpy as np
 
 from cheml.atoms import molecule
 
-import openbabel as ob
+import pybel
 
-from rdkit import Chem
-from rdkit.Chem import AllChem
+#import openbabel as ob
+#from rdkit import Chem
+#from rdkit.Chem import AllChem
 
-
-# Currently need openbabel and rdkit but soon will be only one
-# of them, I guess openbabel.
 
 
 def _get_xyz_from_smi(smi):
-    """xxx."""
+    """Returns molecular geometry in xyz format
+    from smiles string.
+
+    Depends of pybel (and openbabel because of pybel.)
+
+    """
+
+    m=pybel.readstring('smi',smi)
+
+    m.addh()
+
+    m.make3D()
+
+    #>>> pybel.forcefields
+    # ['gaff', 'ghemical', 'mmff94', 'mmff94s', 'uff']
+    m.localopt(forcefield='uff')
+
+    return m.write('xyz')
+
+
+
+
+
+def _get_xyz_from_smi_ob_rdkit(smi):
+    """Returns molecular geometry in xyz format
+    from smiles string.
+
+    Depends on openbabel and rdkit.
+
+    """
 
     m = Chem.MolFromSmiles(smi)
     mh=Chem.AddHs(m)
