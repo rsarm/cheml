@@ -53,7 +53,7 @@ def get_molecules(list_of_smi):
         mol.get_molecule()
 
         mol.energy=0.0
-        mol.data  =0.0
+        mol.data  =np.array([0.0])
 
         list_of_mol.append(mol)
 
