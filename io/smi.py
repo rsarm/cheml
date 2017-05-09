@@ -26,7 +26,7 @@ def _get_xyz_from_smi(smi):
 
     #>>> pybel.forcefields
     # ['gaff', 'ghemical', 'mmff94', 'mmff94s', 'uff']
-    m.localopt(forcefield='uff')
+    m.localopt(forcefield='uff',steps=500) #steps=500 is the default anyway
 
     return m.write('xyz')
 
