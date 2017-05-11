@@ -104,6 +104,15 @@ def get_molecular_cm_eigv(ds):
 
 
 
+def get_molecular_cm_none(ds):
+  """No order is imposed. The CM kept the order that comes with the
+  xyz file where the molecule was got.
+  """
+
+  X = np.array([_descriptor_base(m)[np.triu_indices(m.N)] for m in ds.list_of_mol])
+  y = np.array([m.energy                                  for m in ds.list_of_mol])
+
+  return X,y
 
 
 

@@ -281,6 +281,9 @@ class dataset(object):
         if sorting.lower()=='eigv':
             return mcm.get_molecular_cm_eigv(self)
 
+        if sorting.lower()=='none':
+            return mcm.get_molecular_cm_none(self)
+
 
 
 
