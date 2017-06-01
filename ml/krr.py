@@ -139,8 +139,8 @@ class krr(object):
 
 
 
-    def optimize_kernel(self,xtr,ytr,xte,yte,gamma0=1e-5,niter=100,
-                        gamma_range=[1.e-5],optmod='grid_search'):
+    def optimize_kernel(self,xtr,ytr,xte,yte,gamma0=1e-5,
+                        gamma_range=[1.e-5],optmod='grid_search', maxiter=100, tol=1.e-5):
         """Run an optimization to find a
         minimum of the MAE in function of the kernel width
         gamma.
@@ -149,7 +149,7 @@ class krr(object):
         """
 
         if optmod=='simplex':
-            self.gamma,err = simplex(    self._mae,gamma0,      xtr, ytr, xte, yte)
+            self.gamma,err = simplex(    self._mae,gamma0,      xtr, ytr, xte, yte, maxiter, tol)
 
         if optmod=='grid_search':
             self.gamma,err = grid_search(self._mae,gamma_range, xtr, ytr, xte, yte)

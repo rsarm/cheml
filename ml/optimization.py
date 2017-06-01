@@ -23,17 +23,20 @@ def grid_search(f, gamma_range, xtr, ytr, xte, yte):
 
 
 
-def simplex(f, gamma0, xtr, ytr, xte, yte, tol=1.e-5):
+def simplex(f, gamma0, xtr, ytr, xte, yte, maxiter, tol):
     """xxx."""
 
     res=minimize(f,
                  gamma0,
-                 args   = (xtr,ytr,xte,yte),
-                 method = 'Nelder-Mead',
-                 tol    = tol
+                 args    = (xtr,ytr,xte,yte),
+                 method  = 'Nelder-Mead',
+                 tol     = tol,
+                 options = {'maxiter':maxiter}
                 )
 
     return res.x[0], res.fun
+
+
 
 
 #func_args={"args"  :(xtr,ytr,xte,yte),
