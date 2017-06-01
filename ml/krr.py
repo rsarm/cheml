@@ -1,8 +1,7 @@
 import numpy as np
 
-from scipy.optimize import minimize,basinhopping
-
 from cheml.ml import kernels
+from cheml.ml.optimization import grid_search, simplex
 
 
 
@@ -140,27 +139,22 @@ class krr(object):
 
 
 
-    def optimize_kernel(self,xtr,ytr,xte,yte,gamma0=1e-5,niter=100):
-        """Run a Basin Hopping optimization to find local
-        minima of the MAE in function of the kernel width
-        gamma
+    def optimize_kernel(self,xtr,ytr,xte,yte,gamma0=1e-5,niter=100,
+                        gamma_range=[1.e-5],optmod='grid_search'):
+        """Run an optimization to find a
+        minimum of the MAE in function of the kernel width
+        gamma.
 
-        Returns the lowest minima.
-        ."""
+        Returns the lowest error and updates self.gamma.
+        """
 
-        func_args={"args"  :(xtr,ytr,xte,yte),
-                   "method":'Nelder-Mead'}
+        if optmod=='simplex':
+            self.gamma,err = simplex(    self._mae,gamma0,      xtr, ytr, xte, yte)
 
-        res=basinhopping(self._mae,gamma0,minimizer_kwargs=func_args,
-                 #accept_test=mybounds,
-                 #callback=print_fun,
-                 niter=niter
-                )
-        print res.fun
+        if optmod=='grid_search':
+            self.gamma,err = grid_search(self._mae,gamma_range, xtr, ytr, xte, yte)
 
-        self.gamma=np.abs(res.x[0])
-
-        return res.x
+        return err
 
 
 
