@@ -1,51 +1,48 @@
 import numpy as np
 
 
-from cheml.tools.metrics  import euclidean2, manhattan
 
 
 
-def rbf_kernel(x,y,gamma):
+def rbf_kernel(edm,gamma):
     """xxx."""
 
-    return np.exp(-gamma*euclidean2(x,y))
+    return np.exp(-gamma * edm)
 
 
 
 
 
-def laplacian_kernel(x,y,gamma):
+def laplacian_kernel(mdm,gamma):
     """xxx."""
 
-    return np.exp(-gamma*manhattan(x,y))
+    return np.exp(-gamma * mdm)
 
 
 
 
 
-def multiquadric_cityblock_kernel(x,y,c):
+def multiquadric_cityblock_kernel(mdm,c):
     """xxx."""
 
-    return manhattan(x,y)+np.abs(c)
+    return mdm+np.abs(c)
 
 
 
 
 
-def multiquadric_euclidean_kernel(x,y,c):
+def multiquadric_euclidean_kernel(edm,c):
     """xxx."""
 
-    return np.sqrt(euclidean2(x,y)+c**2)
+    return np.sqrt(edm + c**2)
 
 
 
 
 
 
-def rational_cityblock_kernel(x,y,c):
+def rational_cityblock_kernel(mdm,c):
     """xxx."""
-
-    mdm=manhattan(x,y)
 
     return 1.000 - mdm / (mdm + np.abs(c))
 
@@ -54,10 +51,8 @@ def rational_cityblock_kernel(x,y,c):
 
 
 
-def rational_euclidean_kernel(x,y,c):
+def rational_euclidean_kernel(edm,c):
     """xxx."""
-
-    edm=euclidean2(x,y)
 
     return 1.000 - edm / (edm + c**2)
 
@@ -66,30 +61,29 @@ def rational_euclidean_kernel(x,y,c):
 
 
 
-def inv_multiquadric_cityblock_kernel(x,y,c):
+def inv_multiquadric_cityblock_kernel(mdm,c):
     """xxx."""
 
-    return 1./( manhattan(x,y)+np.abs(c) )
+    return 1. / ( mdm + np.abs(c) )
 
 
 
 
 
 
-def inv_multiquadric_euclidean_kernel(x,y,c):
+def inv_multiquadric_euclidean_kernel(edm,c):
     """xxx."""
 
-    return 1./np.sqrt(euclidean2(x,y)+c**2)
+    return 1. / np.sqrt(edm + c**2)
 
 
 
 
 
 
-def spherical_cityblock_kernel(x,y,gamma):
+def spherical_cityblock_kernel(mdm,gamma):
     """xxx."""
 
-    mdm=manhattan(x,y)
 
     cutoff=(mdm < 1./gamma)*1.
 
@@ -100,10 +94,8 @@ def spherical_cityblock_kernel(x,y,gamma):
 
 
 
-def spherical_euclidean_kernel(x,y,gamma):
+def spherical_euclidean_kernel(edm,gamma):
     """xxx."""
-
-    edm=np.sqrt(euclidean2(x,y))
 
     cutoff=(edm < 1./gamma)*1.
 
