@@ -4,14 +4,14 @@ from scipy.optimize import minimize,basinhopping
 
 
 
-def grid_search(f, gamma_range, xtr, ytr, xte, yte):
+def grid_search(mae, gamma_range, dmtr, dmte, ytr, yte):
     """xxx."""
 
     err=1.e5
     gamma=[]
 
     for g in gamma_range:
-        err_g = f(g,xtr,ytr,xte,yte)
+        err_g = mae(g,dmtr,dmte,ytr, yte)
 
         if  err_g < err:
             gamma = np.copy(g)
@@ -23,12 +23,12 @@ def grid_search(f, gamma_range, xtr, ytr, xte, yte):
 
 
 
-def simplex(f, gamma0, xtr, ytr, xte, yte, maxiter, tol):
+def simplex(mae, gamma0, dmtr, dmte, ytr, yte, maxiter, tol):
     """xxx."""
 
-    res=minimize(f,
+    res=minimize(mae,
                  gamma0,
-                 args    = (xtr,ytr,xte,yte),
+                 args    = (dmtr, dmte, ytr, yte),
                  method  = 'Nelder-Mead',
                  tol     = tol,
                  options = {'maxiter':maxiter}
