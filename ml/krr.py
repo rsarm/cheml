@@ -174,7 +174,9 @@ class krr(object):
     def _mae(self,gamma,dmtr,dmte,ytr,yte):
         """xxx."""
 
-        self.gamma=np.abs(gamma)
+        #self.gamma=np.abs(gamma)
+
+        self.kparams=(np.abs(gamma),)
 
         self._fit(dmtr,ytr)
 
@@ -205,6 +207,8 @@ class krr(object):
 
         if optmod=='grid_search':
             self.gamma,err = grid_search(self._mae, gamma_range, dmtr, dmte, ytr, yte)
+
+        self.kparams=(self.gamma,)
 
         return err
 
