@@ -237,6 +237,20 @@ class dataset(object):
 
 
 
+
+    def to_fml(self,nmol=None,sublist=None):
+        """Returns a list of nmol qml.Molecule objects
+        that is not bound to the class dataset.
+        """
+        from io.cml_to_fml import to_fml
+
+        return to_fml(self,nmol,sublist)
+
+
+
+
+
+
     def to_pyscf(self,nmol=None,bs='sto-3g'):
         """Returns a list of nmol pyscf.gto.Mole objects
         that is not bound to the class dataset.
