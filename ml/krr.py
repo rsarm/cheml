@@ -13,9 +13,7 @@ class krr(object):
 
     def __init__(self,kernel,alpha=1e-10,gamma=1e-5,c=1e-5):
         self.kernel = kernel.lower()
-        self.gamma  = gamma
         self.alpha  = alpha
-        self.c      = c
 
         implemented_kernels=['rbf','gaussian',
                              'laplacian',
@@ -34,53 +32,53 @@ class krr(object):
 
 
         if self.kernel=='rbf' or self.kernel=='gaussian':
-            self._kernel = kernels.rbf_kernel#(xi,xj,self.gamma)
-            self.kparams = (self.gamma,)
+            self._kernel = kernels.rbf_kernel
+            self.kparams = {'gamma':gamma}
             self._dismat = euclidean2
 
         if self.kernel=='laplacian':
-            self._kernel = kernels.laplacian_kernel#(xi,xj,self.gamma)
-            self.kparams = (self.gamma,)
+            self._kernel = kernels.laplacian_kernel
+            self.kparams = {'gamma':gamma}
             self._dismat = manhattan
 
         if self.kernel=='multiquadric_euclidean' or self.kernel=='mql2':
-            self._kernel = kernels.multiquadric_euclidean_kernel#(xi,xj,self.c)
-            self.kparams = (self.c,)
+            self._kernel = kernels.multiquadric_euclidean_kernel
+            self.kparams = {'c':c}
             self._dismat = euclidean2
 
         if self.kernel=='multiquadric_cityblock' or self.kernel=='mql1':
-            self._kernel = kernels.multiquadric_cityblock_kernel#(xi,xj,self.c)
-            self.kparams = (self.c,)
+            self._kernel = kernels.multiquadric_cityblock_kernel
+            self.kparams = {'c':c}
             self._dismat = manhattan
 
         if self.kernel=='inv_multiquadric_euclidean' or self.kernel=='imql2':
-            self._kernel = kernels.inv_multiquadric_euclidean_kernel#(xi,xj,self.c)
-            self.kparams = (self.c,)
+            self._kernel = kernels.inv_multiquadric_euclidean_kernel
+            self.kparams = {'c':c}
             self._dismat = euclidean2
 
         if self.kernel=='inv_multiquadric_cityblock' or self.kernel=='imql1':
-            self._kernel = kernels.inv_multiquadric_cityblock_kernel#(xi,xj,self.c)
-            self.kparams = (self.c,)
+            self._kernel = kernels.inv_multiquadric_cityblock_kernel
+            self.kparams = {'c':c}
             self._dismat = manhattan
 
         if self.kernel=='rational_euclidean' or self.kernel=='ratl2':
-            self._kernel = kernels.rational_euclidean_kernel#(xi,xj,self.c)
-            self.kparams = (self.c,)
+            self._kernel = kernels.rational_euclidean_kernel
+            self.kparams = {'c':c}
             self._dismat = euclidean2
 
         if self.kernel=='rational_cityblock' or self.kernel=='ratl1':
-            self._kernel = kernels.rational_cityblock_kernel#(xi,xj,self.c)
-            self.kparams = (self.c,)
+            self._kernel = kernels.rational_cityblock_kernel
+            self.kparams = {'c':c}
             self._dismat = manhattan
 
         if self.kernel=='spherical_cityblock' or self.kernel=='sphl1':
-            self._kernel = kernels.spherical_cityblock_kernel#(xi,xj,self.gamma)
-            self.kparams = (self.gamma,)
+            self._kernel = kernels.spherical_cityblock_kernel
+            self.kparams = {'gamma':gamma}
             self._dismat = manhattan
 
         if self.kernel=='spherical_euclidean' or self.kernel=='sphl2':
-            self._kernel = kernels.spherical_euclidean_kernel#(xi,xj,self.gamma)
-            self.kparams = (self.gamma,)
+            self._kernel = kernels.spherical_euclidean_kernel
+            self.kparams = {'gamma':gamma}
             self._dismat = euclidean2
 
 
@@ -90,10 +88,11 @@ class krr(object):
     def __repr__(self):
 
         k= "kernel=\'"  + self.kernel+"\'"
-        g= ", gamma=" + str(self.gamma)
         a= ", alpha=" + str(self.alpha)
 
-        return "krr(" + k + g + a + ")"
+        params_str=[pi +'='+ str(self.kparams[pi]) for pi in self.kparams]
+
+        return "krr(" + k + a + ', ' + ', '.join(params_str) + ")"
 
 
 
@@ -109,7 +108,7 @@ class krr(object):
         done to have the same structure as sklearn.
         """
 
-        ktr=self._kernel(dmtr,*self.kparams)
+        ktr=self._kernel(dmtr,**self.kparams)
 
         self.coeff=np.linalg.solve(ktr+self.alpha*np.eye(ktr.shape[0]),ytr)
 
@@ -145,7 +144,7 @@ class krr(object):
         done to have the same structure as sklearn.
         """
 
-        kte=self._kernel(dmte,*self.kparams)
+        kte=self._kernel(dmte,**self.kparams)
 
         return np.dot(kte,self.coeff)
 
@@ -174,9 +173,7 @@ class krr(object):
     def _mae(self,gamma,dmtr,dmte,ytr,yte):
         """xxx."""
 
-        #self.gamma=np.abs(gamma)
-
-        self.kparams=(np.abs(gamma),)
+        self.kparams['gamma']=np.abs(gamma)
 
         self._fit(dmtr,ytr)
 
@@ -196,19 +193,19 @@ class krr(object):
         minimum of the MAE in function of the kernel width
         gamma.
 
-        Returns the lowest error and updates self.gamma.
+        Returns the lowest error and updates kparams['gamma'].
         """
 
         dmtr = self._dismat(xtr,xtr)
         dmte = self._dismat(xte,xtr)
 
         if optmod=='simplex':
-            self.gamma,err = simplex(    self._mae, gamma0,      dmtr, dmte, ytr, yte, maxiter, tol)
+            gamma,err = simplex(    self._mae, gamma0,      dmtr, dmte, ytr, yte, maxiter, tol)
 
         if optmod=='grid_search':
-            self.gamma,err = grid_search(self._mae, gamma_range, dmtr, dmte, ytr, yte)
+            gamma,err = grid_search(self._mae, gamma_range, dmtr, dmte, ytr, yte)
 
-        self.kparams=(self.gamma,)
+        self.kparams['gamma']=gamma
 
         return err
 
