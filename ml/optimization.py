@@ -4,30 +4,30 @@ from scipy.optimize import minimize,basinhopping
 
 
 
-def grid_search(mae, gamma_range, dmtr, dmte, ytr, yte):
+def grid_search(mae, param_range, dmtr, dmte, ytr, yte):
     """xxx."""
 
     err=1.e5
-    gamma=[]
+    param=[]
 
-    for g in gamma_range:
+    for g in param_range:
         err_g = mae(g,dmtr,dmte,ytr, yte)
 
         if  err_g < err:
-            gamma = np.copy(g)
+            param = np.copy(g)
             err   = np.copy(err_g)
 
-    return gamma,err
+    return float(param),err
 
 
 
 
 
-def simplex(mae, gamma0, dmtr, dmte, ytr, yte, maxiter, tol):
+def simplex(mae, param0, dmtr, dmte, ytr, yte, maxiter, tol):
     """xxx."""
 
     res=minimize(mae,
-                 gamma0,
+                 param0,
                  args    = (dmtr, dmte, ytr, yte),
                  method  = 'Nelder-Mead',
                  tol     = tol,
@@ -36,15 +36,5 @@ def simplex(mae, gamma0, dmtr, dmte, ytr, yte, maxiter, tol):
 
     return res.x[0], res.fun
 
-
-
-
-#func_args={"args"  :(xtr,ytr,xte,yte),
-#           "method":'Nelder-Mead'}
-#res=basinhopping(self._mae,gamma0,minimizer_kwargs=func_args,
-#         #accept_test=mybounds,
-#         #callback=print_fun,
-#         niter=niter
-#        )
 
 
