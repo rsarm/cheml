@@ -36,52 +36,52 @@ class krr(object):
 
         if self.kernel=='rbf' or self.kernel=='gaussian':
             self._kernel = kernels.rbf_kernel
-            self.kparams = parse_params('gamma',kwargs)
+            self.kparams = parse_params(self,'gamma',kwargs)
             self._dismat = euclidean2
 
         if self.kernel=='laplacian':
             self._kernel = kernels.laplacian_kernel
-            self.kparams = parse_params('gamma',kwargs)
+            self.kparams = parse_params(self,'gamma',kwargs)
             self._dismat = manhattan
 
         if self.kernel=='multiquadric_euclidean' or self.kernel=='mql2':
             self._kernel = kernels.multiquadric_euclidean_kernel
-            self.kparams = parse_params('c',kwargs)
+            self.kparams = parse_params(self,'c',kwargs)
             self._dismat = euclidean2
 
         if self.kernel=='multiquadric_cityblock' or self.kernel=='mql1':
             self._kernel = kernels.multiquadric_cityblock_kernel
-            self.kparams = parse_params('c',kwargs)
+            self.kparams = parse_params(self,'c',kwargs)
             self._dismat = manhattan
 
         if self.kernel=='inv_multiquadric_euclidean' or self.kernel=='imql2':
             self._kernel = kernels.inv_multiquadric_euclidean_kernel
-            self.kparams = parse_params('c',kwargs)
+            self.kparams = parse_params(self,'c',kwargs)
             self._dismat = euclidean2
 
         if self.kernel=='inv_multiquadric_cityblock' or self.kernel=='imql1':
             self._kernel = kernels.inv_multiquadric_cityblock_kernel
-            self.kparams = parse_params('c',kwargs)
+            self.kparams = parse_params(self,'c',kwargs)
             self._dismat = manhattan
 
         if self.kernel=='rational_euclidean' or self.kernel=='ratl2':
             self._kernel = kernels.rational_euclidean_kernel
-            self.kparams = parse_params('c',kwargs)
+            self.kparams = parse_params(self,'c',kwargs)
             self._dismat = euclidean2
 
         if self.kernel=='rational_cityblock' or self.kernel=='ratl1':
             self._kernel = kernels.rational_cityblock_kernel
-            self.kparams = parse_params('c',kwargs)
+            self.kparams = parse_params(self,'c',kwargs)
             self._dismat = manhattan
 
         if self.kernel=='spherical_cityblock' or self.kernel=='sphl1':
             self._kernel = kernels.spherical_cityblock_kernel
-            self.kparams = parse_params('gamma',kwargs)
+            self.kparams = parse_params(self,'gamma',kwargs)
             self._dismat = manhattan
 
         if self.kernel=='spherical_euclidean' or self.kernel=='sphl2':
             self._kernel = kernels.spherical_euclidean_kernel
-            self.kparams = parse_params('gamma',kwargs)
+            self.kparams = parse_params(self,'gamma',kwargs)
             self._dismat = euclidean2
 
 
@@ -217,7 +217,7 @@ class krr(object):
 
 
 
-def parse_params(param,dict_param):
+def parse_params(r,param,dict_param):
     """xxx."""
 
     if type(param)!=list:
@@ -231,7 +231,7 @@ def parse_params(param,dict_param):
         if pi in arg_list:
             _params[pi]=dict_param[pi]
         else:
-            raise ValueError("Wrong parameter for the selected kernel.")
+            raise ValueError(r.kernel+" kernel needs the parameter(s): "+', '.join(param))
 
     return _params
 
