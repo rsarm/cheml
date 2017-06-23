@@ -127,13 +127,3 @@ def get_molecular_bob_slow(ds):
 
     return X,y[:,0]
 
-
-
-
-
-
-################################### Classes ##############################################
-
-class M_Molecular(object):
-  def f(self,mol):
-    return _descriptor_base_slow(mol)

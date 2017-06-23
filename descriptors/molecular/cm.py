@@ -116,12 +116,3 @@ def get_molecular_cm_none(ds):
 
 
 
-
-
-
-
-################################### Classes ##############################################
-
-class M_Molecular(object):
-  def f(self,mol):
-    return _descriptor_base(mol)[np.triu_indices(mol.N)]
