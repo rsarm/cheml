@@ -173,10 +173,13 @@ class krr(object):
 
 
 
-    def _mae(self,gamma,dmtr,dmte,ytr,yte):
+    def _mae(self,param,dmtr,dmte,ytr,yte):
         """xxx."""
 
-        self.kparams['gamma']=np.abs(gamma)
+        #self.kparams['gamma']=np.abs(gamma)
+
+        for k in self.kparams.keys():
+            self.kparams[k]=np.abs(param)
 
         self._fit(dmtr,ytr)
 
@@ -190,25 +193,25 @@ class krr(object):
 
 
 
-    def optimize_kernel(self,xtr,ytr,xte,yte,gamma0=1e-5,
-                        gamma_range=[1.e-5],optmod='grid_search', maxiter=100, tol=1.e-5):
+    def optimize_kernel(self,xtr,ytr,xte,yte,param0=1e-5,
+                        param_range=[1.e-5],optmod='grid_search', maxiter=100, tol=1.e-5):
         """Run an optimization to find a
-        minimum of the MAE in function of the kernel width
-        gamma.
+        minimum of the MAE in function of the kernel parameter.
 
-        Returns the lowest error and updates kparams['gamma'].
+        Returns the lowest error and updates kparams.
         """
 
         dmtr = self._dismat(xtr,xtr)
         dmte = self._dismat(xte,xtr)
 
         if optmod=='simplex':
-            gamma,err = simplex(    self._mae, gamma0,      dmtr, dmte, ytr, yte, maxiter, tol)
+            param,err = simplex(    self._mae, param0,      dmtr, dmte, ytr, yte, maxiter, tol)
 
         if optmod=='grid_search':
-            gamma,err = grid_search(self._mae, gamma_range, dmtr, dmte, ytr, yte)
+            param,err = grid_search(self._mae, param_range, dmtr, dmte, ytr, yte)
 
-        self.kparams['gamma']=gamma
+        for k in self.kparams.keys():
+            self.kparams[k]=param
 
         return err
 
@@ -225,15 +228,15 @@ def parse_params(r,param,dict_param):
 
     arg_list=[k for k in dict_param]
 
-    _params={}
+    kparams={}
 
     for pi in param:
         if pi in arg_list:
-            _params[pi]=dict_param[pi]
+            kparams[pi]=dict_param[pi]
         else:
             raise ValueError(r.kernel+" kernel needs the parameter(s): "+', '.join(param))
 
-    return _params
+    return kparams
 
 
 
