@@ -139,6 +139,33 @@ class dataset(object):
 
 
 
+    def __add__(self, other):
+        """Adding datasets."""
+
+        total_ds=dataset()
+
+        total_ds.list_of_mol = self.list_of_mol + other.list_of_mol
+        total_ds.nmol        = len(total_ds.list_of_mol)
+
+        return total_ds
+
+
+
+
+
+
+    def __radd__(self, other):
+        """Reverse add method to support sum([ds1,ds2])"""
+        if other == 0:
+            return self
+        else:
+            return self.__add__(other)
+
+
+
+
+
+
     def read_xyz(self,datafile,long_format=False):
         """Returns a list of molecule objects."""
         from io.xyz import get_molecules
