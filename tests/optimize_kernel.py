@@ -8,8 +8,8 @@ from cheml.ml.krr import krr
 import matplotlib.pyplot as plt
 
 
-ds=dataset()
-ds.read_xyz('mydataset.xyz')
+#
+ds.datatset('mydataset.xyz')
 
 x,_y=ds.get_molecular_bob()
 #x,_y=ds.get_molecular_cm()

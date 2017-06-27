@@ -126,8 +126,19 @@ def _equalize_mol_sizes(ds):
 class dataset(object):
     """xxx."""
 
-    def __init__(self,nmol=None):
+    def __init__(self,datafile,nmol=None):
         self.nmol     = nmol
+
+        if type(datafile)==str:
+            datafile_ext=datafile.split('.')[-1]
+
+            if datafile_ext=='xyz' : # xyz standard format.
+                self.read_xyz(datafile,long_format=False)
+            if datafile_ext=='lxyz': # xyz long format.
+                self.read_xyz(datafile,long_format=True)
+
+        if type(datafile)==list: # Should be a list of smiles.
+            self.from_smiles(datafile)
 
 
 
@@ -159,7 +170,7 @@ class dataset(object):
     def __add__(self, other):
         """Adding datasets."""
 
-        total_ds=dataset()
+        total_ds=dataset(datafile=None)
 
         total_ds.list_of_mol = self.list_of_mol + other.list_of_mol
         total_ds.nmol        = len(total_ds.list_of_mol)

@@ -10,8 +10,8 @@ from cheml.dataset import dataset
 import matplotlib.pyplot as plt
 
 
-ds=dataset()
-ds.read_xyz('my_dataset_example.xyz')
+
+ds.dataset('my_dataset_example.xyz')
 
 
 x,_y=ds.get_molecular_cm()
