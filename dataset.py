@@ -139,6 +139,14 @@ class dataset(object):
 
 
 
+    def __getitem__(self, i):
+        """To get a molecule directly from ds[n]."""
+        return self.list_of_mol[i]
+
+
+
+
+
     def __add__(self, other):
         """Adding datasets."""
 
