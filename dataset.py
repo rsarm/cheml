@@ -126,8 +126,11 @@ def _equalize_mol_sizes(ds):
 class dataset(object):
     """xxx."""
 
-    def __init__(self,datafile,nmol=None):
+    def __init__(self,datafile=None,nmol=None):
         self.nmol     = nmol
+
+        if datafile==None:
+            pass
 
         if type(datafile)==str:
             datafile_ext=datafile.split('.')[-1]
