@@ -12,6 +12,7 @@ import cheml.descriptors.atomic.rdf      as rdf
 from cheml.tools.pt import Z, str_z2s
 from cheml.atoms    import molecule
 
+from cheml.io.read_dataset import read_dataset
 
 from collections import OrderedDict
 
@@ -127,21 +128,10 @@ class dataset(object):
     """xxx."""
 
     def __init__(self,datafile=None,nmol=None):
-        self.nmol     = nmol
+        self.nmol = nmol
 
-        if datafile==None:
-            pass
+        read_dataset(self,datafile,nmol)
 
-        if type(datafile)==str:
-            datafile_ext=datafile.split('.')[-1]
-
-            if datafile_ext=='xyz' : # xyz standard format.
-                self.read_xyz(datafile,long_format=False)
-            if datafile_ext=='lxyz': # xyz long format.
-                self.read_xyz(datafile,long_format=True)
-
-        if type(datafile)==list: # Should be a list of smiles.
-            self.from_smiles(datafile)
 
 
 
