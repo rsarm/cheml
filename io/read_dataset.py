@@ -5,7 +5,8 @@ def read_dataset(_dataset,datafile,nmol):
     """xxx."""
 
     if datafile==None:
-        pass
+        _dataset.nmol=0
+        _dataset.list_of_mol=[]
 
     if type(datafile)==str:
         datafile_ext=datafile.split('.')[-1]
