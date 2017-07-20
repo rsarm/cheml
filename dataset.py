@@ -186,27 +186,6 @@ class dataset(object):
 
 
 
-
-    def read_xyz(self,datafile,long_format=False):
-        """Returns a list of molecule objects."""
-        from io.xyz import get_molecules
-
-        self.list_of_mol=get_molecules(datafile,self.nmol,long_format)
-        self.nmol=len(self.list_of_mol)
-
-
-
-
-    def from_smiles(self,list_of_smi):
-        """Returns a list of molecule objects."""
-        from io.smi import get_molecules
-
-        self.list_of_mol=get_molecules(list_of_smi)
-        self.nmol=len(self.list_of_mol)
-
-
-
-
     def find_elem(self,token):
         """xxx."""
 
@@ -389,3 +368,5 @@ class dataset(object):
        """xxx."""
        return pwrdf.get_pairwise_RDF(self,elem,zbag,sigma,n_points,
                                                      r_max,cut_off,mol_skip)
+
+#

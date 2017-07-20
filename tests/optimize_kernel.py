@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 #
-ds.datatset('mydataset.xyz')
+ds=datatset('mydataset.xyz')
 
 x,_y=ds.get_molecular_bob()
 #x,_y=ds.get_molecular_cm()

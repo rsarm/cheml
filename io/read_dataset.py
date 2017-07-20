@@ -1,5 +1,30 @@
 
 
+## Reading datset files: #############################################
+
+def _read_xyz(ds,datafile,long_format=False):
+    """Returns a list of molecule objects."""
+
+    from cheml.io.xyz import get_molecules
+
+    ds.list_of_mol = get_molecules(datafile,ds.nmol,long_format)
+    ds.nmol        = len(ds.list_of_mol)
+
+
+
+def _from_smiles(ds,list_of_smi):
+    """Returns a list of molecule objects."""
+
+    from cheml.io.smi import get_molecules
+
+    ds.list_of_mol = get_molecules(list_of_smi)
+    ds.nmol        = len(ds.list_of_mol)
+
+######################################################################
+
+
+
+
 
 def read_dataset(_dataset,datafile,nmol):
     """xxx."""
@@ -12,11 +37,11 @@ def read_dataset(_dataset,datafile,nmol):
         datafile_ext=datafile.split('.')[-1]
 
         if datafile_ext=='xyz' : # xyz standard format.
-            _dataset.read_xyz(datafile,long_format=False)
+            _read_xyz(_dataset,datafile,long_format=False)
 
         if datafile_ext=='lxyz': # xyz long format.
-            _dataset.read_xyz(datafile,long_format=True)
+            _read_xyz(_dataset,datafile,long_format=True)
 
 
     if type(datafile)==list: # Should be a list of smiles.
-        _dataset.from_smiles(datafile)
+        _from_smiles(_dataset,datafile)
