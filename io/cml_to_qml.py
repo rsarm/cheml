@@ -1,10 +1,9 @@
 
 
-import fml as fml
+import qml
 
-
-def _to_fml(ds,nmol,sublist):
-    """Returns a list of nmol fml.Molecule objects.
+def _to_qml(ds,nmol,sublist):
+    """Returns a list of nmol qml.Molecule objects.
 
     * ds      :: dataset objects
     * nmol    :: number of molecules
@@ -25,13 +24,13 @@ def _to_fml(ds,nmol,sublist):
 
 
     for m in sublist:
-        fmlm=fml.Molecule()
+        qmlc=qml.Compound()
 
-        fmlm.natoms=m.natm
-        fmlm.atomtypes=m.symb
-        fmlm.nuclear_charges=m.z
-        fmlm.coordinates=m.R
+        qmlc.natoms=m.natm
+        qmlc.atomtypes=m.symb
+        qmlc.nuclear_charges=m.z
+        qmlc.coordinates=m.R
 
-        list_of_mol.append(fmlm)
+        list_of_mol.append(qmlc)
 
     return list_of_mol

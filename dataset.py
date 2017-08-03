@@ -269,9 +269,22 @@ class dataset(object):
         """Returns a list of nmol qml.Molecule objects
         that is not bound to the class dataset.
         """
-        from io.cml_to_fml import to_fml
+        from io.cml_to_fml import _to_fml
 
-        return to_fml(self,nmol,sublist)
+        return _to_fml(self,nmol,sublist)
+
+
+
+
+
+
+    def to_qml(self,nmol=None,sublist=None):
+        """Returns a list of nmol qml.Molecule objects
+        that is not bound to the class dataset.
+        """
+        from io.cml_to_qml import _to_qml
+
+        return _to_qml(self,nmol,sublist)
 
 
 
